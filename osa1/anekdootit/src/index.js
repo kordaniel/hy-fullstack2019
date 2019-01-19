@@ -2,16 +2,28 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
 const App = (props) => {
+  const n = props.anecdotes.length
   const [selected, setSelected] = useState(0)
-  const handleClick = () => {
-    setSelected(Math.floor(Math.random() * props.anecdotes.length))
+  const [votes, setVotes] = useState(new Array(n).fill(0))
+  
+  
+  const handleClickNext = () => {
+    setSelected(Math.floor(Math.random() * n))
   }
   
-  
+  const handleClickVote = () => {
+    const copy = [...votes]
+    copy[selected] += 1
+    setVotes(copy)
+  }
+
+  //console.log(votes)
   return (
     <div>
-      <button onClick={handleClick}>Arvo uusi</button>
+      <button onClick={handleClickVote}>Äänestä</button>
+      <button onClick={handleClickNext}>Arvo uusi</button>
       <p>{props.anecdotes[selected]}</p>
+      <p>on saanut {votes[selected]} ääntä</p>
     </div>
   )
 }
