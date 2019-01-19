@@ -5,8 +5,9 @@ const App = (props) => {
   const n = props.anecdotes.length
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(new Array(n).fill(0))
-  
-  
+  const [mostVotes, setMostVotes] = useState(0)
+  const [mostVotesID, setMostVotesID] = useState(0)
+
   const handleClickNext = () => {
     setSelected(Math.floor(Math.random() * n))
   }
@@ -14,16 +15,28 @@ const App = (props) => {
   const handleClickVote = () => {
     const copy = [...votes]
     copy[selected] += 1
+    if (copy[selected] > mostVotes) {
+      setMostVotes(copy[selected])
+      setMostVotesID(selected)
+    }
     setVotes(copy)
   }
 
   //console.log(votes)
   return (
     <div>
-      <button onClick={handleClickVote}>Äänestä</button>
-      <button onClick={handleClickNext}>Arvo uusi</button>
-      <p>{props.anecdotes[selected]}</p>
-      <p>on saanut {votes[selected]} ääntä</p>
+      <h1>Anecdote of the day</h1>
+      <div>{props.anecdotes[selected]}</div>
+      <div>on saanut {votes[selected]} ääntä</div>
+      <div>
+        <button onClick={handleClickVote}>Äänestä</button>
+        <button onClick={handleClickNext}>Arvo uusi</button>
+      </div>
+      <div>
+        <h1>Anecdote with most votes</h1>
+        <div>{props.anecdotes[mostVotesID]}</div>
+        <div>on saanut {votes[mostVotesID]} ääntä</div>
+      </div>
     </div>
   )
 }
