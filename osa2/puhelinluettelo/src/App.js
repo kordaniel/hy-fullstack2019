@@ -4,6 +4,39 @@ import React, { useState } from 'react';
 //import './App.css';
 
 //const Person = ({name}) => (<div>{name}</div>)
+const Filter = ({filter, handlerer}) => (
+  <div>
+    rajaa näytettäviä <input 
+                        value={filter}
+                        onChange={handlerer}
+                      />
+  </div>
+)
+
+const PersonForm = ({addPerson, newName, nameHandlerer, newNumber, numberHandlerer}) => (
+  <form onSubmit={addPerson}>
+        <div>
+          nimi: <input 
+                  value={newName}
+                  onChange={nameHandlerer}
+                />
+        </div>
+        <div>
+          numero: <input 
+                    value={newNumber}
+                    onChange={numberHandlerer}
+                  />
+        </div>
+        <div>
+          <button type="submit">lisää</button>
+        </div>
+      </form>
+)
+
+const Persons = ({persons}) => (
+  persons.map(p => <div key={p.name}>{p.name} {p.number}</div>)
+)
+
 const App = () => {
   const [persons, setPersons] = useState([
     {
@@ -20,6 +53,7 @@ const App = () => {
   const personsToShow = filter === ''
     ? persons
     : persons.filter(p => p.name.toLowerCase().includes(filter))
+    //filter is always lowercase, handleFormFilterChange lowercases all filters
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -47,64 +81,20 @@ const App = () => {
   const handleFormNumberChange = (event) => (setNewNumber(event.target.value))
   const handleFormFilterChange = (event) => (setFilter(event.target.value.toLowerCase()))
 
-  const rows = () => personsToShow.map(person => 
-    <div key={person.name}>{person.name} {person.number}</div>
-  )
-
   return (
     <div>
       <h2>Puhelinluettelo</h2>
-      <div>
-        rajaa näytettäviä <input
-                            value={filter}
-                            onChange={handleFormFilterChange}
-                          />
-      </div>
+      <Filter filter={filter} handlerer={handleFormFilterChange} />
       <h3>Lisää uusi</h3>
-      <form onSubmit={addPerson}>
-        <div>
-          nimi: <input 
-                  value={newName}
-                  onChange={handleFormNameChange}
-                />
-        </div>
-        <div>
-          numero: <input 
-                    value={newNumber}
-                    onChange={handleFormNumberChange}
-                  />
-        </div>
-        <div>
-          <button type="submit">lisää</button>
-        </div>
-      </form>
+      <PersonForm addPerson={addPerson}
+                  newName={newName}
+                  nameHandlerer={handleFormNameChange}
+                  newNumber={newNumber}
+                  numberHandlerer={handleFormNumberChange} />
       <h3>Numerot</h3>
-      {rows()}
+      <Persons persons={personsToShow} />
     </div>
   )
 }
-/*
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
-*/
+
 export default App;
