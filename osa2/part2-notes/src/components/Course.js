@@ -33,14 +33,19 @@ const Content = (props) => {
 }
  
 const Total = (props) => {
+  /*
   let yht = 0
   props.course.parts.forEach(value => {
     //console.log('total', value.exercises)
     yht += value.exercises
-  })
-  //console.log('yht: ', yht)
+  })*/
+  //const partsExercises = props.course.parts.map(course => course.exercises)
+  //const reducer = (acc, cur) => acc + cur
+  const total = props.course.parts.reduce(
+    (acc, cur) => acc + cur.exercises, 0)
+  //console.log('yht: ', total)
   return (
-    <p>yhteensä {yht} tehtävää</p>
+    <p>yhteensä {total} tehtävää</p>
   )
 }
 
