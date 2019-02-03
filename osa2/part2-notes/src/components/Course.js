@@ -1,29 +1,17 @@
 import React from 'react'
 
-const Header = (props) => {
-  //console.log('header: ', props)
-  return (
+const Header = ({course}) => (
     <>
-      <h2>{props.course.name}</h2>
+      <h2>{course.name}</h2>
     </>
-  )
-}
+)
  
-const Part = (props) => {
-  //console.log('part: ', props)
-  return (
-    <>
-      {props.part.name} {props.part.exercises}
-    </>
-  )
-}
+const Part = ({part}) => (<>{part.name} {part.exercises}</>)
  
 const Content = (props) => {
-  //console.log('content: ', props)
   const rows = () =>
     props.course.parts.map(
       part => <p key={part.id}><Part part={part} /></p>)
-  
   
   return (
     <>
@@ -50,7 +38,6 @@ const Total = (props) => {
 }
 
 const Course = (props) => {
-  //console.log('course: ', props)
   return (
     <div>
       <Header course={props.course} />
