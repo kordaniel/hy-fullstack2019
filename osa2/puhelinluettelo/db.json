@@ -7,18 +7,28 @@
     },
     {
       "name": "Martti Tienari",
-      "number": "040-123456",
+      "number": "050-123456",
       "id": 2
+    },
+    {
+      "name": "Koodi Guru",
+      "number": "123-1337",
+      "id": 3
+    },
+    {
+      "name": "Guru Koodi",
+      "number": "1337-321321",
+      "id": 4
     },
     {
       "name": "Arto Järvinen",
       "number": "040-123456",
-      "id": 3
+      "id": 5
     },
     {
       "name": "Lea Kutvonen",
-      "number": "040-123456",
-      "id": 4
+      "number": "050-123456",
+      "id": 6
     }
   ]
 }

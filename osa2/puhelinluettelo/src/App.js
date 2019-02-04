@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import personService from './services/persons'
 
 const Filter = ({filter, handlerer}) => (
@@ -31,13 +30,10 @@ const PersonForm = ({addPerson, newName, nameHandlerer, newNumber, numberHandler
       </form>
 )
 
-const Persons = ({persons, handleClick}) => (//{
-  //console.log(persons.map(p => `${p.id}: ${p.name}`))
-  //return (
+const Persons = ({persons, handleClick}) => (
   persons.map(
     p => <div key={p.name}>{p.name} {p.number} 
         <button onClick={() => handleClick(p.id, p.name)}>poista</button></div>)
-//)}
 )
 
 const App = () => {
@@ -70,8 +66,20 @@ const App = () => {
       return
     }
     
-    if (persons.map(p => p.name).includes(newPerson.name)) {
-      alert(`${newPerson.name} on jo luettelossa`)
+    const existingPerson = persons.find(p => p.name === newPerson.name)
+    //if (persons.map(p => p.name).includes(newPerson.name)) {
+    if (existingPerson !== undefined) {
+      if (window.confirm(`${newPerson.name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+        const updatedPerson = {...existingPerson, number: newPerson.number}
+        personService
+          .update(existingPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== returnedPerson.id
+                                            ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
     } else {
       personService
         .create(newPerson)
