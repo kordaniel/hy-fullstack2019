@@ -1,7 +1,6 @@
 //import React, { Component } from 'react';
-import React, { useState } from 'react';
-//import logo from './logo.svg';
-//import './App.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 //const Person = ({name}) => (<div>{name}</div>)
 const Filter = ({filter, handlerer}) => (
@@ -38,6 +37,7 @@ const Persons = ({persons}) => (
 )
 
 const App = () => {
+  /*
   const [persons, setPersons] = useState([
     {
       name: 'Arto Hellas',
@@ -46,7 +46,8 @@ const App = () => {
     {name: 'Martti Tienari', number: '040-123456'},
     {name: 'Arto Järvinen', number: '050-123456'},
     {name: 'Lea Kutvonen', number: '040-654321'}
-  ])
+  ])*/
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('Edit to add a new person...')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
@@ -55,6 +56,21 @@ const App = () => {
     : persons.filter(p => p.name.toLowerCase().includes(filter))
     //filter is always lowercase, handleFormFilterChange lowercases all filters
 
+    useEffect(() => {
+      //console.log('effect')
+      axios
+        .get('http://localhost:3001/persons')
+        .then(res => setPersons(res.data))
+    }, [])
+    /*
+  const hook = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => setPersons(response.data))
+  }
+  useEffect(hook, [])
+  */
+  //console.log('render', persons.length, 'persons')
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = {
