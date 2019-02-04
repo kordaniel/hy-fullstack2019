@@ -86,11 +86,18 @@ const App = () => {
     if (persons.map(p => p.name).includes(newPerson.name)) {
       alert(`${newPerson.name} on jo luettelossa`)
     } else {
-      setPersons(persons.concat(newPerson))
+      axios
+        .post('http://localhost:3001/persons', newPerson)
+        .then(response => {
+          console.log('tallennett', response)
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNumber('')
+        })
+      
     }
     
-    setNewName('')
-    setNewNumber('')
+    
   }
 
   const handleFormNameChange = (event) => (setNewName(event.target.value))

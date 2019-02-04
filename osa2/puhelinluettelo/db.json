@@ -19,6 +19,21 @@
       "name": "Lea Kutvonen",
       "number": "040-123456",
       "id": 4
+    },
+    {
+      "name": "Kissa Koira",
+      "number": "020-1211221",
+      "id": 5
+    },
+    {
+      "name": "Mauno Mikkilä",
+      "number": "123-3322112",
+      "id": 6
+    },
+    {
+      "name": "Uusi Nimi",
+      "number": "212-1212232",
+      "id": 7
     }
   ]
 }
