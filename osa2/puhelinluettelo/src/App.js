@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import personService from './services/persons'
-
+//import './index.css'
 const Filter = ({filter, handlerer}) => (
   <div>
     rajaa näytettäviä <input 
@@ -36,7 +36,31 @@ const Persons = ({persons, handleClick}) => (
         <button onClick={() => handleClick(p.id, p.name)}>poista</button></div>)
 )
 
+const Notification = ({message}) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className='notification'>
+      {message}
+    </div>
+  )
+}
+
+const ErrorNotification = ({message}) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('Edit to add a new person...')
   const [newNumber, setNewNumber] = useState('')
@@ -45,7 +69,7 @@ const App = () => {
     ? persons
     : persons.filter(p => p.name.toLowerCase().includes(filter))
     //filter is always lowercase, handleFormFilterChange lowercases all filters
-
+  
   useEffect(() => {
     personService
       .getAll()
@@ -78,6 +102,11 @@ const App = () => {
                                             ? p : returnedPerson))
             setNewName('')
             setNewNumber('')
+            showNotification(`Päivitettiin ${returnedPerson.name} tietoja`)
+          })
+          .catch(error => {
+            showErrorMessage(`Tapahtui virhe, ${existingPerson.name} ei voitu päivittää`)
+            setPersons(persons.filter(p => p.id !== existingPerson.id))
           })
       }
     } else {
@@ -87,21 +116,45 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+          showNotification(`Lisättiin ${returnedPerson.name} luetteloon`)
+        })
+        .catch(error => {
+          showErrorMessage(`Tapahtui virhe, ${newPerson.name} ei lisätty`)
         })
     }
   }
-
+  
   const deletePerson = (id, name) => {
     //console.log('deletePersonfunktio', id)
     if (!window.confirm(`Poistetaanko ${name}`)) {
       return
     }
+    
     personService
       .remove(id)
       .then(returneddata => {
         //console.log('delete', returneddata)
         setPersons(persons.filter(p => p.id !== id))
+        showNotification(`Poistettiin ${name} luettelosta`)
       })
+      .catch(error => {
+        showErrorMessage(`Tapahtu virhe, ${name} ei voitu poistaa`)
+        setPersons(persons.filter(p => p.id !== id))
+      })
+  }
+
+  const showNotification = message => {
+    setNotificationMessage(message)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
+  }
+
+  const showErrorMessage = message => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
   }
 
   const handleFormNameChange = (event) => (setNewName(event.target.value))
@@ -111,6 +164,8 @@ const App = () => {
   return (
     <div>
       <h2>Puhelinluettelo</h2>
+      <ErrorNotification message={errorMessage} />
+      <Notification message={notificationMessage} />
       <Filter filter={filter} handlerer={handleFormFilterChange} />
       <h3>Lisää uusi</h3>
       <PersonForm addPerson={addPerson}
