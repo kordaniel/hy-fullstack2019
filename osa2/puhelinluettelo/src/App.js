@@ -1,8 +1,7 @@
-//import React, { Component } from 'react';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import personService from './services/persons'
 
-//const Person = ({name}) => (<div>{name}</div>)
 const Filter = ({filter, handlerer}) => (
   <div>
     rajaa näytettäviä <input 
@@ -32,21 +31,16 @@ const PersonForm = ({addPerson, newName, nameHandlerer, newNumber, numberHandler
       </form>
 )
 
-const Persons = ({persons}) => (
-  persons.map(p => <div key={p.name}>{p.name} {p.number}</div>)
+const Persons = ({persons, handleClick}) => (//{
+  //console.log(persons.map(p => `${p.id}: ${p.name}`))
+  //return (
+  persons.map(
+    p => <div key={p.name}>{p.name} {p.number} 
+        <button onClick={() => handleClick(p.id, p.name)}>poista</button></div>)
+//)}
 )
 
 const App = () => {
-  /*
-  const [persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      number: '045-123456'
-    },
-    {name: 'Martti Tienari', number: '040-123456'},
-    {name: 'Arto Järvinen', number: '050-123456'},
-    {name: 'Lea Kutvonen', number: '040-654321'}
-  ])*/
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('Edit to add a new person...')
   const [newNumber, setNewNumber] = useState('')
@@ -56,21 +50,14 @@ const App = () => {
     : persons.filter(p => p.name.toLowerCase().includes(filter))
     //filter is always lowercase, handleFormFilterChange lowercases all filters
 
-    useEffect(() => {
-      //console.log('effect')
-      axios
-        .get('http://localhost:3001/persons')
-        .then(res => setPersons(res.data))
-    }, [])
-    /*
-  const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
-  }
-  useEffect(hook, [])
-  */
-  //console.log('render', persons.length, 'persons')
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, [])
+
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = {
@@ -86,18 +73,27 @@ const App = () => {
     if (persons.map(p => p.name).includes(newPerson.name)) {
       alert(`${newPerson.name} on jo luettelossa`)
     } else {
-      axios
-        .post('http://localhost:3001/persons', newPerson)
-        .then(response => {
-          console.log('tallennett', response)
-          setPersons(persons.concat(response.data))
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
         })
-      
     }
-    
-    
+  }
+
+  const deletePerson = (id, name) => {
+    //console.log('deletePersonfunktio', id)
+    if (!window.confirm(`Poistetaanko ${name}`)) {
+      return
+    }
+    personService
+      .remove(id)
+      .then(returneddata => {
+        //console.log('delete', returneddata)
+        setPersons(persons.filter(p => p.id !== id))
+      })
   }
 
   const handleFormNameChange = (event) => (setNewName(event.target.value))
@@ -115,7 +111,7 @@ const App = () => {
                   newNumber={newNumber}
                   numberHandlerer={handleFormNumberChange} />
       <h3>Numerot</h3>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} handleClick={deletePerson} />
     </div>
   )
 }
