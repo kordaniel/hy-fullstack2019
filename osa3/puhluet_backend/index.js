@@ -1,10 +1,16 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
 
-app.use(bodyParser.json())
 const PORT = 3001
 const BASEURL = '/api/persons'
+
+app.use(bodyParser.json())
+
+morgan.token('postData', (req, res) => 
+  Object.keys(req.body).length ? JSON.stringify(req.body) : '')
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :postData'))
 
 let persons = [
   {
@@ -108,6 +114,8 @@ app.post(BASEURL, (req, res) => {
   persons = persons.concat(newPerson)
   res.json(newPerson)
 })
+
+//app.use(unknownEndpoint)
 
 app.listen(PORT, () => {
   console.log(`puhluettelo backend running and listening on port ${PORT}`)
