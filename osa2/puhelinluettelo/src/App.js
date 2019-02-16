@@ -105,7 +105,9 @@ const App = () => {
             showNotification(`Päivitettiin ${returnedPerson.name} tietoja`)
           })
           .catch(error => {
-            showErrorMessage(`Tapahtui virhe, ${existingPerson.name} ei voitu päivittää`)
+            //showErrorMessage(`Tapahtui virhe, ${existingPerson.name} ei voitu päivittää`)
+            //console.log('virhe paivitettaessa henkiloa: ', error.response.data)
+            showErrorMessage(`${error.response.data.error}`)
             setPersons(persons.filter(p => p.id !== existingPerson.id))
           })
       }
@@ -119,7 +121,10 @@ const App = () => {
           showNotification(`Lisättiin ${returnedPerson.name} luetteloon`)
         })
         .catch(error => {
-          showErrorMessage(`Tapahtui virhe, ${newPerson.name} ei lisätty`)
+          //showErrorMessage(`Tapahtui virhe, ${newPerson.name} ei lisätty`)
+          //console.log(error.response.data)
+          //showErrorMessage(error.response.data)
+          showErrorMessage(`${error.response.data.error}`)
         })
     }
   }
