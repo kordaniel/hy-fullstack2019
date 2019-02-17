@@ -13,6 +13,7 @@ blogsRouter.get('/:id', async (req, res, next) => {
     if (blog) {
       res.json(blog.toJSON())
     } else {
+      logger.error('blog', blog)
       res.status(404).end()
     }
   } catch (exception) {
@@ -39,11 +40,29 @@ blogsRouter.post('/', async (req, res, next) => {
   }
 })
 
+blogsRouter.put('/:id', async (req, res, next) => {
+  const body = req.body
+
+  const blog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes === undefined ? 0 : body.likes
+  }
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.id, blog, { new: true })
+    res.json(updatedBlog.toJSON())
+  } catch (exception) {
+    next(exception)
+  }
+})
+
 blogsRouter.delete('/:id', async (req, res, next) => {
-  logger.info('delete:', req.params.id)
+  //logger.info('delete:', req.params.id)
   try {
     await Blog.findOneAndDelete(req.param.id)
-    logger.info('täällä')
     res.status(204).end()
   } catch (exception) {
     logger.error('VIRHE')
