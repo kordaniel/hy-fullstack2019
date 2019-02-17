@@ -1,24 +1,26 @@
 const config = require('./utils/config')
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const app = express()
 const blogsRouter = require('./controllers/blogs')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
+const logger = require('./utils/logger')
 
-console.log('Connecting to MongoDB, using url:', config.MONGODB_URI)
+logger.info('Connecting to MongoDB, using url:', config.MONGODB_URI)
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
-    console.log('Connected to MongoDB')
+    logger.info('Connected to MongoDB')
   })
   .catch((error) => {
-    console.log('ERROR connecting to MongoDB:', error.message)
+    logger.info('ERROR connecting to MongoDB:', error.message)
   })
 
 
-//app.use(cors())
-app.use(express.static('build'))
+app.use(cors())
+//app.use(express.static('build'))
 app.use(bodyParser.json())
 app.use(middleware.requestLogger)
 
