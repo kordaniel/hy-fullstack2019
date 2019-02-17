@@ -8,6 +8,8 @@ const app = express()
 const config = require('./utils/config')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const blogsRouter = require('./controllers/blogs')
+/*
 const mongoose = require('mongoose')
 //mongoose.set('useFindAndModify', false)
 
@@ -23,10 +25,10 @@ const Blog = mongoose.model('Blog', blogSchema)
 //const mongoUrl = 'mongodb://localhost/bloglist'
 const mongoUrl = config.MONGODB_URI //process.env.MONGODB_URI
 mongoose.connect(mongoUrl, { useNewUrlParser: true })
-
+*/
 app.use(cors())
 app.use(bodyParser.json())
-
+/*
 app.get('/api/blogs', (req, res) => {
   Blog
     .find({})
@@ -44,9 +46,10 @@ app.post('/api/blogs', (req, res) => {
       res.status(201).json(result)
     })
 })
-
+*/
 //const PORT = process.env.PORT || 3003
 
+app.use('/api/blogs', blogsRouter)
 app.listen(config.PORT, () => {
   console.log(`Server running on port ${config.PORT}`)
 })

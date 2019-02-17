@@ -3,7 +3,7 @@ const config = require('../utils/config')
 
 const url = config.MONGODB_URI
 
-console.log('connecting to', url)
+console.log('Connecting to MongoDB, using url:', url)
 
 mongoose.connect(url, { useNewUrlParser: true })
   .then(() => {
