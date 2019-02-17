@@ -1,4 +1,4 @@
-const logger = require('../utils/logger')
+//const logger = require('../utils/logger')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
