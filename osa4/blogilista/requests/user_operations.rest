@@ -1,0 +1,53 @@
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "undos",
+  "password": "topsekret"
+}
+
+###
+
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "dodos",
+  "password": "topsekret"
+}
+
+###
+
+GET http://localhost:3003/api/users
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "ab",
+  "name": "Second User",
+  "password": "topsekret"
+}
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "dodos",
+  "name": "Second User",
+  "password": "topsekret"
+}
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "undos",
+  "name": "First User",
+  "password": "topsekret"
+}

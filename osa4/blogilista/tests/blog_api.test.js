@@ -22,7 +22,7 @@ beforeEach(async () => {
   //
 })
 
-describe('when there is initially some notes saved', async () => {
+describe('when there is initially some blogs saved', async () => {
   /*
   beforeEach(async () => {
     await Blog.deleteMany({})
@@ -50,7 +50,7 @@ describe('when there is initially some notes saved', async () => {
     expect(contents).toContain(helper.initialBlogs[0].title)
   })
 
-  describe('viewing a specific note', async () => {
+  describe('viewing a specific blog', async () => {
     test('a specific blog can be viewed', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToView = blogsAtStart[0]
@@ -65,7 +65,7 @@ describe('when there is initially some notes saved', async () => {
     })
   })
 
-  test('fails with statuscode 404 if note does not exist', async () => {
+  test('fails with statuscode 404 if blog does not exist', async () => {
     const validNonexistingId = await helper.nonExistingId()
     await api
       .get(`/api/blogs/${validNonexistingId}`)
@@ -81,7 +81,7 @@ describe('when there is initially some notes saved', async () => {
   })
 })
 
-describe('addition of a new note', async () => {
+describe('addition of a new blog', async () => {
   test('succeeds with valid data', async () => {
     const newBlog = {
       title: 'Blog-Entry by supertest/jest',
