@@ -97,6 +97,44 @@ describe('Blog with most likes', () => {
         likes: 12,
         __v: 0 })
   })
+
+  describe('mostBlogs returns the correct author with most blogs', () => {
+    test('returns author: Robert C. Martin with 3 blogs', () => {
+      expect(listHelper.mostBlogs(blogs)).toEqual(
+        {
+          author: 'Robert C. Martin',
+          blogs: 3
+        }
+      )
+    })
+
+    test('return correct author with 1 blog when array has one blog', () => {
+      expect(listHelper.mostBlogs([
+        {
+          _id: '5a422aa71b54a676234d17f8',
+          title: 'Go To Statement Considered Harmful',
+          author: 'Edsger W. Dijkstra',
+          url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+          likes: 5,
+          __v: 0
+        }
+      ])).toEqual(
+        {
+          author: 'Edsger W. Dijkstra',
+          blogs: 1
+        }
+      )
+    })
+
+    test('returns empty json when array is empty', () => {
+      expect(listHelper.mostBlogs([])).toEqual({ })
+    })
+
+    test('returns empty json when parameter is undefined', () => {
+      expect(listHelper.mostBlogs()).toEqual({ })
+    })
+  })
+
   //jatetaan harjoitustehtavaksi..
   //test('list with several blogs containing same max likes returns the first of them', () => {
   //
