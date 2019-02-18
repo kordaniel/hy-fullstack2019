@@ -28,7 +28,6 @@ blogsRouter.post('/', async (req, res, next) => {
   const body = req.body
 
   //const token = getTokenFrom(req)
-
   try {
     //const decodedToken = jwt.verify(token, process.env.SECRET)
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
@@ -51,7 +50,7 @@ blogsRouter.post('/', async (req, res, next) => {
     const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
-    res.json(savedBlog.toJSON())//res.status(201).json(savedBlog.toJSON())
+    res.status(201).json(savedBlog.toJSON())
   } catch (exception) {
     next(exception)
   }

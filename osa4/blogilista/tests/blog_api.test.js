@@ -4,22 +4,43 @@ const helper = require('./test_helper')
 //const { app, server } = require('../index')
 const app = require('../app')
 const Blog = require('../models/blog')
-
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 const api = supertest(app)
+
+const validTokenAuthentication = async () => {
+  const user = helper.initialUsers[0]
+  const credentials = {
+    username: user.username,
+    password: user.password
+  }
+
+  const userData = await api
+    .post('/api/login')
+    .send(credentials)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return `Bearer ${userData.body.token}`
+}
 
 beforeEach(async () => {
   await Blog.remove({})
-  //rinnakkain
+  await User.remove({})
+
+  //jarjestyksessa
+  const saltRounds = 10
+  for (let user of helper.initialUsers) {
+    user.passwordHash = await bcrypt.hash(user.password, saltRounds)
+    let userObject = new User(user)
+    await userObject.save()
+  }
+
+  //rinakkain
   const blogObjects = helper.initialBlogs
     .map(b => new Blog(b))
-  const promiseArray = blogObjects.map(b => b.save())
-  await Promise.all(promiseArray)
-  //Sama tulos, mutta jarjestyksessa(ei rinnakkain)
-  //for (let blog of helper.initialBlogs) {
-  //  let blogObject = new Blog(blog)
-  //  await blogObject.save()
-  //}
-  //
+  const promiseBlogArray = blogObjects.map(b => b.save())
+  await Promise.all(promiseBlogArray)
 })
 
 describe('when there is initially some blogs saved', async () => {
@@ -50,8 +71,8 @@ describe('when there is initially some blogs saved', async () => {
     expect(contents).toContain(helper.initialBlogs[0].title)
   })
 
-  describe('viewing a specific blog', async () => {
-    test('a specific blog can be viewed', async () => {
+  describe('a specific blog can be viewed', async () => {
+    test('returns correct blog which has properly formatted identifier (id)', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToView = blogsAtStart[0]
 
@@ -60,7 +81,9 @@ describe('when there is initially some blogs saved', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      //expect(resultBlog.body).toEqual(blogToView)
+      //expect(resultBlog.body._id).toBeDefined()
+      expect(resultBlog.body.id).toBeDefined()
+      expect(resultBlog.body.id).toEqual(blogToView.id)
       expect(resultBlog.body.title).toEqual(blogToView.title)
     })
   })
@@ -92,6 +115,7 @@ describe('addition of a new blog', async () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', await validTokenAuthentication())
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -112,11 +136,10 @@ describe('addition of a new blog', async () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', await validTokenAuthentication())
       .send(newBlog)
       .expect(400)
 
-    //const response = await api.get('/api/blogs')
-    //expect(response.body.length).toBe(helper.initialBlogs.length)
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
   })
@@ -130,16 +153,15 @@ describe('addition of a new blog', async () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', await validTokenAuthentication())
       .send(newBlog)
       .expect(400)
 
-    //const response = await api.get('/api/blogs')
-    //expect(response.body.length).toBe(helper.initialBlogs.length)
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
   })
 })
-
+/*
 test('a blog can be deleted', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
@@ -179,7 +201,7 @@ test('blog with no likes set gets 0 likes', async () => {
   const contents = blogsAtEnd.map(b => b.title)
   expect(contents).toContain(newBlog.title)
 })
-
+*/
 
 afterAll(() => {
   mongoose.connection.close()
