@@ -23,15 +23,6 @@ blogsRouter.get('/:id', async (req, res, next) => {
     next(exception)
   }
 })
-/*
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization
-    && authorization.toLowerCase().startsWith('bearer')) {
-    return authorization.substring(7)
-  }
-  return null
-}*/
 
 blogsRouter.post('/', async (req, res, next) => {
   const body = req.body
@@ -86,10 +77,24 @@ blogsRouter.put('/:id', async (req, res, next) => {
 })
 
 blogsRouter.delete('/:id', async (req, res, next) => {
-  //logger.info('delete:', req.params.id)
   try {
-    await Blog.findOneAndDelete(req.param.id)
-    res.status(204).end()
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    //jwt.verify heittaa poikkeuksen, ei tarvita
+    //if (!decodedToken.id) {
+    //  return res.status(401).json({ error: 'token missing or invalid' })
+    //}
+    //const user = await User.findById(decodedToken.id)
+    //const blog = await Blog.findOneAndDelete(req.param.id)
+    const blog = await Blog.findById(req.params.id)
+
+    if (!blog) {
+      res.status(404).json({ error: 'no blog with supplied id' })
+    } else if (blog.user.toString() !== decodedToken.id.toString()) {
+      res.status(401).json({ error: 'not authorized' })
+    } else {
+      blog.delete()
+      res.status(204).end()
+    }
   } catch (exception) {
     logger.error('VIRHE')
     next(exception)
