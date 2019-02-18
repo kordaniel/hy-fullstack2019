@@ -23,7 +23,7 @@ blogsRouter.get('/:id', async (req, res, next) => {
     next(exception)
   }
 })
-
+/*
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
   if (authorization
@@ -31,16 +31,17 @@ const getTokenFrom = request => {
     return authorization.substring(7)
   }
   return null
-}
+}*/
 
 blogsRouter.post('/', async (req, res, next) => {
   const body = req.body
 
-  const token = getTokenFrom(req)
+  //const token = getTokenFrom(req)
 
   try {
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!token || !decodedToken.id) {
+    //const decodedToken = jwt.verify(token, process.env.SECRET)
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    if (/*!token || */!decodedToken.id) {
       return res.status(401).json({
         error: 'token missing or invalid'
       })
