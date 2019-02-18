@@ -31,9 +31,23 @@ const mostBlogs = blogs => {
         : b, -1)
 }
 
+const mostLikes = blogs => {
+  if (!blogs) return { }
+  const authorsBlogsLikesCount = blogs
+    .reduce((tot, b) => ({ ...tot, [b.author]: (tot[b.author] || 0) + b.likes }), {})
+  const authorsBlogsLikesCountFormatted = Object.keys(authorsBlogsLikesCount)
+    .map(author => ({ author, likes: authorsBlogsLikesCount[author] }))
+  return blogs.length === 0 ? { }
+    : authorsBlogsLikesCountFormatted
+      .reduce((a,b) => a.likes > b.likes
+        ? a
+        : b, -1)
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
