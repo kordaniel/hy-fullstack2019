@@ -127,6 +127,32 @@ describe('addition of a new blog', async () => {
     expect(contents).toContain(newBlog.title)
   })
 
+  test('blog with no likes set gets 0 likes', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newBlog = {
+      title: 'Blog-Entry by supertest/jest',
+      author: 'Jest Supertest',
+      url: 'http://testing.testing.com/'
+    }
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', await validTokenAuthentication())
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+      .then(result => {
+        expect(result).not.toBeUndefined
+        expect(result.body.likes).toBe(0)
+      })
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length + 1)
+    const contents = blogsAtEnd.map(b => b.title)
+    expect(contents).toContain(newBlog.title)
+  })
+
   test('fails with status code 400 if data is invalid(no title)', async () => {
     const newBlog = {
       author: 'Forgot Title',
@@ -165,9 +191,10 @@ describe('addition of a new blog', async () => {
 test('a blog can be deleted', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
-
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAA', blogToDelete)
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', await validTokenAuthentication())
     .expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
@@ -177,29 +204,6 @@ test('a blog can be deleted', async () => {
 
   const contents = blogsAtEnd.map(b => b.title)
   expect(contents).not.toContain(blogToDelete.title)
-})
-
-test('blog with no likes set gets 0 likes', async () => {
-  const newBlog = {
-    title: 'Blog-Entry by supertest/jest',
-    author: 'Jest Supertest',
-    url: 'http://testing.testing.com/'
-  }
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-    .then(result => {
-      expect(result).not.toBeUndefined
-      expect(result.body.likes).toBe(0)
-    })
-  const blogsAtEnd = await helper.blogsInDb()
-
-  expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
-  const contents = blogsAtEnd.map(b => b.title)
-  expect(contents).toContain(newBlog.title)
 })
 */
 
