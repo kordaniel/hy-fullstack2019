@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/5c69467dc213e55333725146
+Content-Type: application/json
+
+{
+  "title": "Blogi Testitietokantaan",
+  "author": "Dan K",
+  "url": "https://www",
+  "likes": 902
+}
