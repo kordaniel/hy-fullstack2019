@@ -3,7 +3,31 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className='notification'>
+      {message}
+    </div>
+  )
+}
+
+const ErrorNotification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -28,9 +52,24 @@ const App = () => {
     }
   }, [])
 
+  const showNotification = message => {
+    setNotificationMessage(message)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 3000)
+  }
+
+  const showErrorMessage = message => {
+    console.log('täällä', message)
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
-    console.log('logging in with', username, password)
+    //console.log('logging in with', username, password)
     try {
       const user = await loginService.login({
         username, password,
@@ -42,15 +81,17 @@ const App = () => {
       
       blogService.setToken(user.token)
       setUser(user)
+      showNotification(`${user.name} logged in with username '${user.username}'`)
       setUsername('')
       setPassword('')
-      console.log('logged in with', user)
+      //console.log('logged in with', user)
     } catch (exception) {
       //setErrorMessage('username or password invalid')
       //setTimeout(() => {
       //  setErrorMessage(null)
       //}, 5000)
-      console.log('error while logging in with', username, password)
+      showErrorMessage('wrong username or password')
+      //console.log('error while logging in with', username, password)
     }
   }
 
@@ -73,11 +114,13 @@ const App = () => {
     blogService.create(newBlog)
     .then(response => {
       setBlogs(blogs.concat(response))
+      showNotification(`A new blog ${newBlogTitle} by ${newBlogAuthor} added`)
       setNewBlogTitle('')
       setNewBlogAuthor('')
       setNewBlogUrl('')
     })
     .catch(error => {
+      showErrorMessage('Error adding blog')
       console.log('error creating new blog', error)
     })
   }
@@ -160,10 +203,12 @@ const App = () => {
 
   return (
     <div>
-    {user === null ?
-      loginForm() :
-      blogsRenderer()
-    }
+      <ErrorNotification message={errorMessage} />
+      <Notification message={notificationMessage} />
+      {user === null ?
+        loginForm() :
+        blogsRenderer()
+      }
     </div>
   )
 }
