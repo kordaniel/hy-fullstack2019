@@ -186,16 +186,19 @@ const App = () => {
           <Blog key={blog.id}
                 blog={blog}
                 increaseBlogLikes={() => increaseBlogLikes(blog.id)}
-                removeBlogHandler={() => removeBlog(blog.id)} />
+                removeBlogHandler={() => removeBlog(blog.id)}
+                loggedInUsername={user.username ? user.username : undefined} />
         )}
     </div>
   )
 
   const removeBlog = async id => {
     const blog = blogs.find(b => b.id === id)
+    
     if (!window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
       return
     }
+
     try {
       await blogService.remove(id)
       setBlogs(blogs.filter(b => b.id !== id))
@@ -204,8 +207,6 @@ const App = () => {
       console.log('virhe poistettaessa blogia', exception)
       showErrorMessage(`Error when deleting blog ${blog.title}`)
     }
-    
-    
   }
 
   const increaseBlogLikes = async id => {
