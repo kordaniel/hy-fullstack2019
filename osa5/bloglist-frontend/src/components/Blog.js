@@ -4,7 +4,7 @@ const Blog = ({ blog, increaseBlogLikes, removeBlogHandler, loggedInUsername }) 
   const showWhenDetailsHidden  = { display: detailsVisible ? 'none' : '' }
   const showWhenDetailsVisible = { display: detailsVisible ? '' : 'none' }
   const showWhenUsersOwnBlog = { display: loggedInUsername === blog.user.username ? '' : 'none' }
-  
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,

@@ -3,7 +3,7 @@ import Blog from './components/Blog'
 import NewBlogForm from './components/newblogform'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Togglable from './components/togglable';
+import Togglable from './components/togglable'
 
 const Notification = ({ message }) => {
   if (message === null) {
@@ -37,13 +37,13 @@ const App = () => {
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
-  
+
   const newBlogFormRef = React.createRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const App = () => {
   }
 
   const showErrorMessage = message => {
-    console.log('täällä', message)
+    //console.log('täällä', message)
     setErrorMessage(message)
     setTimeout(() => {
       setErrorMessage(null)
@@ -82,7 +82,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-      
+
       blogService.setToken(user.token)
       setUser(user)
       showNotification(`${user.name} logged in with username '${user.username}'`)
@@ -108,27 +108,27 @@ const App = () => {
 
   const handleNewBlog = async (event) => {
     event.preventDefault()
-    
+
     console.log('creating new blog')
     const newBlog = {
       title: newBlogTitle,
       author: newBlogAuthor,
       url: newBlogUrl,
-      }
+    }
 
     blogService.create(newBlog)
-    .then(response => {
-      newBlogFormRef.current.toggleVisibility()
-      setBlogs(blogs.concat(response))
-      showNotification(`A new blog ${newBlogTitle} by ${newBlogAuthor} added`)
-      setNewBlogTitle('')
-      setNewBlogAuthor('')
-      setNewBlogUrl('')
-    })
-    .catch(error => {
-      showErrorMessage('Error adding blog')
-      console.log('error creating new blog', error)
-    })
+      .then(response => {
+        newBlogFormRef.current.toggleVisibility()
+        setBlogs(blogs.concat(response))
+        showNotification(`A new blog ${newBlogTitle} by ${newBlogAuthor} added`)
+        setNewBlogTitle('')
+        setNewBlogAuthor('')
+        setNewBlogUrl('')
+      })
+      .catch(error => {
+        showErrorMessage('Error adding blog')
+        console.log('error creating new blog', error)
+      })
   }
 
   const loginForm = () => (
@@ -137,19 +137,19 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
           käyttäjätunnus
-            <input type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
+          <input type="text"
+            value={username}
+            name="Username"
+            onChange={({ target }) => setUsername(target.value)}
+          />
         </div>
         <div>
           salasana
-            <input type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
+          <input type="password"
+            value={password}
+            name="Password"
+            onChange={({ target }) => setPassword(target.value)}
+          />
         </div>
         <button type="submit">kirjaudu</button>
       </form>
@@ -167,7 +167,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       {loggedInUserRenderer()}
-      
+
       <Togglable buttonLabel='Add new Blog' ref={newBlogFormRef}>
         <NewBlogForm
           handleNewBlog={handleNewBlog}
@@ -184,17 +184,17 @@ const App = () => {
         .sort((a,b) => b.likes - a.likes)
         .map(blog =>
           <Blog key={blog.id}
-                blog={blog}
-                increaseBlogLikes={() => increaseBlogLikes(blog.id)}
-                removeBlogHandler={() => removeBlog(blog.id)}
-                loggedInUsername={user.username ? user.username : undefined} />
+            blog={blog}
+            increaseBlogLikes={() => increaseBlogLikes(blog.id)}
+            removeBlogHandler={() => removeBlog(blog.id)}
+            loggedInUsername={user.username ? user.username : undefined} />
         )}
     </div>
   )
 
   const removeBlog = async id => {
     const blog = blogs.find(b => b.id === id)
-    
+
     if (!window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
       return
     }
@@ -216,7 +216,7 @@ const App = () => {
       const responseBlog = await blogService.update(changedBlog.id, changedBlog)
       setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
     } catch (exception) {
-      console.log('virhe kasvattaessa tykkayksia', exception)
+      console.log('virhe kasvatettaessa tykkayksia', exception)
     }
   }
 
