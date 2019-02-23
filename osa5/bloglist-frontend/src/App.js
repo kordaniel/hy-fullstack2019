@@ -180,11 +180,20 @@ const App = () => {
         />
       </Togglable>
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      {blogs
+        .sort((a,b) => b.likes - a.likes)
+        .map(blog =>
+          <Blog key={blog.id} blog={blog} increaseBlogLikes={() => increaseBlogLikes(blog.id)} />
+        )}
     </div>
   )
+
+  const increaseBlogLikes = async id => {
+    const blog = blogs.find(b => b.id === id)
+    const changedBlog = { ...blog, likes: blog.likes + 1 }
+    const responseBlog = await blogService.update(changedBlog.id, changedBlog)
+    setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
+  }
 
   return (
     <div>
