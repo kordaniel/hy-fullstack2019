@@ -183,16 +183,40 @@ const App = () => {
       {blogs
         .sort((a,b) => b.likes - a.likes)
         .map(blog =>
-          <Blog key={blog.id} blog={blog} increaseBlogLikes={() => increaseBlogLikes(blog.id)} />
+          <Blog key={blog.id}
+                blog={blog}
+                increaseBlogLikes={() => increaseBlogLikes(blog.id)}
+                removeBlogHandler={() => removeBlog(blog.id)} />
         )}
     </div>
   )
 
+  const removeBlog = async id => {
+    const blog = blogs.find(b => b.id === id)
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
+      return
+    }
+    try {
+      await blogService.remove(id)
+      setBlogs(blogs.filter(b => b.id !== id))
+      showNotification(`${blog.title} deleted`)
+    } catch (exception) {
+      console.log('virhe poistettaessa blogia', exception)
+      showErrorMessage(`Error when deleting blog ${blog.title}`)
+    }
+    
+    
+  }
+
   const increaseBlogLikes = async id => {
     const blog = blogs.find(b => b.id === id)
     const changedBlog = { ...blog, likes: blog.likes + 1 }
-    const responseBlog = await blogService.update(changedBlog.id, changedBlog)
-    setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
+    try {
+      const responseBlog = await blogService.update(changedBlog.id, changedBlog)
+      setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
+    } catch (exception) {
+      console.log('virhe kasvattaessa tykkayksia', exception)
+    }
   }
 
   return (
