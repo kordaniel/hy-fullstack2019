@@ -202,9 +202,11 @@ const App = () => {
   const increaseBlogLikes = async id => {
     const blog = blogs.find(b => b.id === id)
     const changedBlog = { ...blog, likes: blog.likes + 1 }
+
     try {
       const responseBlog = await blogService.update(changedBlog.id, changedBlog)
       setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
+      //blogService.getAll().then(blogs => setBlogs(blogs))
     } catch (exception) {
       console.log('virhe kasvatettaessa tykkayksia', exception)
     }
