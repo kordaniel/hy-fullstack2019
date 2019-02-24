@@ -132,7 +132,7 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <div>
+    <div className='login'>
       <h2>log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
@@ -164,7 +164,7 @@ const App = () => {
   )
 
   const blogsRenderer = () => (
-    <div>
+    <div className='blogs'>
       <h2>blogs</h2>
       {loggedInUserRenderer()}
 
