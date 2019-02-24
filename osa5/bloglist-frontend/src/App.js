@@ -31,19 +31,20 @@ const ErrorNotification = ({ message }) => {
 const App = () => {
   const username = useField('text')
   const password = useField('password')
+  const newBlogTitle = useField('text')
+  const newBlogAuthor = useField('text')
+  const newBlogUrl = useField('text')
+
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
 
   const newBlogFormRef = React.createRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs(blogs)
     )
   }, [])
 
@@ -88,8 +89,8 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       showNotification(`${user.name} logged in with username '${user.username}'`)
-      username.clear()
-      password.clear()
+      username.reset()
+      password.reset()
     } catch (exception) {
       showErrorMessage('wrong username or password')
       //console.log('error while logging in with', username, password)
@@ -107,19 +108,19 @@ const App = () => {
     event.preventDefault()
 
     const newBlog = {
-      title: newBlogTitle,
-      author: newBlogAuthor,
-      url: newBlogUrl,
+      title: newBlogTitle.value,
+      author: newBlogAuthor.value,
+      url: newBlogUrl.value,
     }
 
     blogService.create(newBlog)
       .then(response => {
         newBlogFormRef.current.toggleVisibility()
         setBlogs(blogs.concat(response))
-        showNotification(`A new blog ${newBlogTitle} by ${newBlogAuthor} added`)
-        setNewBlogTitle('')
-        setNewBlogAuthor('')
-        setNewBlogUrl('')
+        showNotification(`A new blog ${response.title} by ${response.author} added`)
+        newBlogTitle.reset()
+        newBlogAuthor.reset()
+        newBlogUrl.reset()
       })
       .catch(error => {
         showErrorMessage('Error adding blog')
@@ -137,11 +138,11 @@ const App = () => {
       <form onSubmit={handleLogin}>
         <div>
           käyttäjätunnus
-          <input { ... (({ clear, ...username }) => username)(username) } />
+          <input { ... (({ reset, ...username }) => username)(username) } />
         </div>
         <div>
           salasana
-          <input { ... (({ clear, ...password }) => password)(password) } />
+          <input { ... (({ reset, ...password }) => password)(password) } />
         </div>
         <button type="submit">kirjaudu</button>
       </form>
@@ -163,9 +164,6 @@ const App = () => {
       <Togglable buttonLabel='Add new Blog' ref={newBlogFormRef}>
         <NewBlogForm
           handleNewBlog={handleNewBlog}
-          handleNewBlogTitle={({ target }) => setNewBlogTitle(target.value)}
-          handleNewBlogAuthor={({ target }) => setNewBlogAuthor(target.value)}
-          handleNewBlogUrl={({ target }) => setNewBlogUrl(target.value)}
           newBlogTitle={newBlogTitle}
           newBlogAuthor={newBlogAuthor}
           newBlogUrl={newBlogUrl}
