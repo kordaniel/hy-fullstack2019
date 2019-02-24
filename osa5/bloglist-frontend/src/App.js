@@ -4,6 +4,7 @@ import NewBlogForm from './components/newblogform'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/togglable'
+import { useField } from './hooks'
 
 const Notification = ({ message }) => {
   if (message === null) {
@@ -28,11 +29,11 @@ const ErrorNotification = ({ message }) => {
 }
 
 const App = () => {
+  const username = useField('text')
+  const password = useField('password')
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
@@ -76,9 +77,10 @@ const App = () => {
     //console.log('logging in with', username, password)
     try {
       const user = await loginService.login({
-        username, password,
+        username: username.value,
+        password: password.value,
       })
-
+      //console.log('käyttäjä', user)
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
@@ -86,14 +88,9 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       showNotification(`${user.name} logged in with username '${user.username}'`)
-      setUsername('')
-      setPassword('')
-      //console.log('logged in with', user)
+      username.clear()
+      password.clear()
     } catch (exception) {
-      //setErrorMessage('username or password invalid')
-      //setTimeout(() => {
-      //  setErrorMessage(null)
-      //}, 5000)
       showErrorMessage('wrong username or password')
       //console.log('error while logging in with', username, password)
     }
@@ -109,7 +106,6 @@ const App = () => {
   const handleNewBlog = async (event) => {
     event.preventDefault()
 
-    console.log('creating new blog')
     const newBlog = {
       title: newBlogTitle,
       author: newBlogAuthor,
@@ -132,24 +128,20 @@ const App = () => {
   }
 
   const loginForm = () => (
+    //ugly code in destructurin username-hook here. In hooks/index.js useField
+    //-customhook exports clear function to clear the username/password. It's not needed
+    //here but handleLogin function does use it. need to find an cleaner way to implement this..
+    //now it destructs the attributes the input-field needs and discards the clear reference
     <div className='login'>
       <h2>log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
           käyttäjätunnus
-          <input type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
+          <input { ... (({ clear, ...username }) => username)(username) } />
         </div>
         <div>
           salasana
-          <input type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <input { ... (({ clear, ...password }) => password)(password) } />
         </div>
         <button type="submit">kirjaudu</button>
       </form>

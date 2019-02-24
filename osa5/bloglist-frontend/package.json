@@ -28,6 +28,7 @@
   "devDependencies": {
     "eslint-plugin-jest": "^22.3.0",
     "jest-dom": "^3.1.2",
+    "jest-localstorage-mock": "^2.4.0",
     "react-testing-library": "^5.9.0"
   }
 }
