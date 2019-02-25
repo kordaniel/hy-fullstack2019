@@ -13,15 +13,15 @@ const NewBlogForm = ({
       <form onSubmit={handleNewBlog}>
         <div>
           title
-          <input { ... (({ reset, ...newBlogTitle }) => newBlogTitle)(newBlogTitle) } />
+          <input { ...newBlogTitle } />
         </div>
         <div>
           author
-          <input { ... (({ reset, ...newBlogAuthor }) => newBlogAuthor)(newBlogAuthor)} />
+          <input { ...newBlogAuthor } />
         </div>
         <div>
           url
-          <input { ... (({ reset, ...newBlogUrl }) => newBlogUrl)(newBlogUrl)} />
+          <input { ...newBlogUrl } />
         </div>
         <button type="submit">create</button>
       </form>

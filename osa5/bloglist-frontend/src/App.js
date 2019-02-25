@@ -29,11 +29,11 @@ const ErrorNotification = ({ message }) => {
 }
 
 const App = () => {
-  const username = useField('text')
-  const password = useField('password')
-  const newBlogTitle = useField('text')
-  const newBlogAuthor = useField('text')
-  const newBlogUrl = useField('text')
+  const { reset: clearUsername, ...username } = useField('text')
+  const { reset: clearPassowrd, ...password } = useField('password')
+  const { reset: clearNewBlogTitle, ...newBlogTitle } = useField('text')
+  const { reset: clearNewBlogAuthor, ...newBlogAuthor } = useField('text')
+  const { reset: clearNewBlogUrl, ...newBlogUrl } = useField('text')
 
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -89,8 +89,8 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       showNotification(`${user.name} logged in with username '${user.username}'`)
-      username.reset()
-      password.reset()
+      clearUsername() //username.reset()
+      clearPassowrd() //password.reset()
     } catch (exception) {
       showErrorMessage('wrong username or password')
       //console.log('error while logging in with', username, password)
@@ -116,11 +116,12 @@ const App = () => {
     blogService.create(newBlog)
       .then(response => {
         newBlogFormRef.current.toggleVisibility()
+        //console.log('palautus', response)
         setBlogs(blogs.concat(response))
         showNotification(`A new blog ${response.title} by ${response.author} added`)
-        newBlogTitle.reset()
-        newBlogAuthor.reset()
-        newBlogUrl.reset()
+        clearNewBlogTitle()
+        clearNewBlogAuthor()
+        clearNewBlogUrl()
       })
       .catch(error => {
         showErrorMessage('Error adding blog')
@@ -133,16 +134,17 @@ const App = () => {
     //-customhook exports clear function to clear the username/password. It's not needed
     //here but handleLogin function does use it. need to find an cleaner way to implement this..
     //now it destructs the attributes the input-field needs and discards the clear reference
+    //<input { ... (({ reset, ...username }) => username)(username) } />
     <div className='login'>
       <h2>log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
           käyttäjätunnus
-          <input { ... (({ reset, ...username }) => username)(username) } />
+          <input { ...username } />
         </div>
         <div>
           salasana
-          <input { ... (({ reset, ...password }) => password)(password) } />
+          <input { ...password } />
         </div>
         <button type="submit">kirjaudu</button>
       </form>
