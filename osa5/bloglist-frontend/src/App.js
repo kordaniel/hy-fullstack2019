@@ -66,7 +66,6 @@ const App = () => {
   }
 
   const showErrorMessage = message => {
-    //console.log('täällä', message)
     setErrorMessage(message)
     setTimeout(() => {
       setErrorMessage(null)
@@ -75,7 +74,6 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    //console.log('logging in with', username, password)
     try {
       const user = await loginService.login({
         username: username.value,
@@ -89,8 +87,8 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       showNotification(`${user.name} logged in with username '${user.username}'`)
-      clearUsername() //username.reset()
-      clearPassowrd() //password.reset()
+      clearUsername()
+      clearPassowrd()
     } catch (exception) {
       showErrorMessage('wrong username or password')
       //console.log('error while logging in with', username, password)
@@ -98,7 +96,6 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    //console.log('logoutHandler running')
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
     blogService.setToken(null)
@@ -116,7 +113,6 @@ const App = () => {
     blogService.create(newBlog)
       .then(response => {
         newBlogFormRef.current.toggleVisibility()
-        //console.log('palautus', response)
         setBlogs(blogs.concat(response))
         showNotification(`A new blog ${response.title} by ${response.author} added`)
         clearNewBlogTitle()
@@ -130,11 +126,6 @@ const App = () => {
   }
 
   const loginForm = () => (
-    //ugly code in destructurin username-hook here. In hooks/index.js useField
-    //-customhook exports clear function to clear the username/password. It's not needed
-    //here but handleLogin function does use it. need to find an cleaner way to implement this..
-    //now it destructs the attributes the input-field needs and discards the clear reference
-    //<input { ... (({ reset, ...username }) => username)(username) } />
     <div className='login'>
       <h2>log in to application</h2>
       <form onSubmit={handleLogin}>
@@ -175,7 +166,8 @@ const App = () => {
       {blogs
         .sort((a,b) => b.likes - a.likes)
         .map(blog =>
-          <Blog key={blog.id}
+          <Blog
+            key={blog.id}
             blog={blog}
             increaseBlogLikes={() => increaseBlogLikes(blog.id)}
             removeBlogHandler={() => removeBlog(blog.id)}
@@ -208,7 +200,6 @@ const App = () => {
     try {
       const responseBlog = await blogService.update(changedBlog.id, changedBlog)
       setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
-      //blogService.getAll().then(blogs => setBlogs(blogs))
     } catch (exception) {
       console.log('virhe kasvatettaessa tykkayksia', exception)
     }
