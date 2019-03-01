@@ -31,13 +31,6 @@ describe('<App /> with logged in user', () => {
       username: 'undos'
     }
 
-
-    //const user = {
-    //  username: 'undos',
-    //  name: 'First User',
-    //  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVuZG9zIiwiaWQiOiI1YzZhMjcxMGE3MjVjYzI0NGIwYTk1MTUiLCJpYXQiOjE1NTA5Nzk2NjR9.BKP66F5Ucol_tAgoAGrXYro63ZTFiI6aYCOg7HFjZm4'
-    //}
-
     localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
 
     const component = render(
