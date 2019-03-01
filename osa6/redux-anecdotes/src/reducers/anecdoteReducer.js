@@ -55,7 +55,7 @@ export const createAnecdote = anecdote => {
 export const voteOnId = id => {
   return {
     type: 'VOTE',
-    id: id
+    id
   }
 }
 
