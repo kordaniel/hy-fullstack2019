@@ -17,15 +17,17 @@ const asObject = (anecdote) => {
   }
 }
 
-const initialState = anecdotesAtStart.map(asObject)
+const asSortedByVotes = state => state.sort((a, b) => b.votes - a.votes)
+
+const initialState = asSortedByVotes(anecdotesAtStart.map(asObject))
 
 const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
+  //console.log('state now: ', state)
+  //console.log('action', action)
   //console.log('reducerID', action.id)
   switch (action.type) {
     case 'NEW_ANECDOTE':
-      return [...state, action.data]
+      return asSortedByVotes([...state, action.data])
     case 'VOTE':
       const id = action.id
       const anecdoteToChange = state.find(a => a.id === id)
@@ -33,13 +35,13 @@ const reducer = (state = initialState, action) => {
         ...anecdoteToChange,
         votes: anecdoteToChange.votes + 1
       }
-      return state.map(a => a.id !== id ? a : changedAnecdote)
+      return asSortedByVotes(state.map(a => a.id !== id ? a : changedAnecdote))
     default:
-      return state
+      return asSortedByVotes(state)//tarviiko tassa sortata..?
   }
 }
 
-export const createAnecdote = (anecdote) => {
+export const createAnecdote = anecdote => {
   return {
     type: 'NEW_ANECDOTE',
     data: {
@@ -50,7 +52,7 @@ export const createAnecdote = (anecdote) => {
   }
 }
 
-export const voteOnId = (id) => {
+export const voteOnId = id => {
   return {
     type: 'VOTE',
     id: id
