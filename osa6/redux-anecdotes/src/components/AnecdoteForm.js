@@ -1,7 +1,7 @@
 import React from 'react'
 import { createAnecdote } from '../reducers/anecdoteReducer'
 
-const NewAnecdote = (props) => {
+const AnecdoteForm = (props) => {
   const addAnecdote = (event) => {
     event.preventDefault()
     const anecdote = event.target.anecdote.value
@@ -20,4 +20,4 @@ const NewAnecdote = (props) => {
   )
 }
 
-export default NewAnecdote
+export default AnecdoteForm
