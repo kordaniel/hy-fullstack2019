@@ -7,7 +7,7 @@ const AnecdoteList = (props) => {
   return (
     <div>
       <h2>Anecdotes</h2>
-      {props.store.getState().map(anecdote =>
+      {props.store.getState().anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
