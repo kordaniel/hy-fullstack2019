@@ -1,11 +1,13 @@
 import React from 'react'
 import { createAnecdote } from '../reducers/anecdoteReducer'
+import { timedNotification } from './Notification'
 
 const AnecdoteForm = (props) => {
   const addAnecdote = (event) => {
     event.preventDefault()
     const anecdote = event.target.anecdote.value
     props.store.dispatch(createAnecdote(anecdote))
+    timedNotification(props.store, `You added '${anecdote}'`)
     event.target.anecdote.value = ''
   }
 

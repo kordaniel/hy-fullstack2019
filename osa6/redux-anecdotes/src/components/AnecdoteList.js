@@ -1,13 +1,23 @@
 import React from 'react'
 import { voteOnId } from '../reducers/anecdoteReducer'
+import { timedNotification } from './Notification'
 
 const AnecdoteList = (props) => {
-  const vote = id => props.store.dispatch(voteOnId(id))
+  const { anecdotes, filter } = props.store.getState()
+  const anecdotesToShow = filter === '' ? anecdotes
+    : anecdotes.filter(anecdote => 
+      anecdote.content.toLowerCase().includes(filter.toLowerCase()))
+
+  const vote = id => {
+    props.store.dispatch(voteOnId(id))
+    const votedAnecdote = props.store.getState()
+      .anecdotes.find(a => a.id === id).content
+    timedNotification(props.store, `You voted '${votedAnecdote}'`)
+  }
 
   return (
     <div>
-      <h2>Anecdotes</h2>
-      {props.store.getState().anecdotes.map(anecdote =>
+      {anecdotesToShow.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}

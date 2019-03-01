@@ -1,4 +1,5 @@
 import React from 'react';
+import { removeNotification, notificationChange } from '../reducers/notificationReducer'
 
 const Notification = (props) => {
   const style = {
@@ -11,6 +12,13 @@ const Notification = (props) => {
       {props.store.getState().notification}
     </div>
   )
+}
+
+export const timedNotification = (store, message) => {
+  store.dispatch(notificationChange(message))
+  setTimeout(() => {
+    store.dispatch(removeNotification())
+  }, 5000)
 }
 
 export default Notification
