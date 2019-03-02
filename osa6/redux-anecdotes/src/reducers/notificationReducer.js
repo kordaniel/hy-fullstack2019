@@ -1,3 +1,4 @@
+
 const initialState = null
 
 const notificationReducer = (state = initialState, action) => {
@@ -11,16 +12,17 @@ const notificationReducer = (state = initialState, action) => {
   }
 }
 
-export const notificationChange = notification => {
-  return {
-    type: 'SET_NOTIFICATION',
-    notification
-  }
-}
-
-export const removeNotification = () => {
-  return {
-    type: 'DELETE'
+export const setNotification = (notification, seconds = 5) => {
+  return async dispatch => {
+    await dispatch({
+      type: 'SET_NOTIFICATION',
+      notification
+    })
+    await setTimeout(() => {
+      dispatch({
+        type: 'DELETE'
+      })
+    }, seconds * 1000)
   }
 }
 

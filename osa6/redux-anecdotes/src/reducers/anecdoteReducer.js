@@ -1,3 +1,4 @@
+import anecdoteService from '../services/anecdotes'
 /*
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -35,30 +36,39 @@ const anecdoteReducer = (state = [], action) => {
       }
       return asSortedByVotes(state.map(a => a.id !== id ? a : changedAnecdote))
     case 'INIT_ANECDOTES':
-      return action.data
+      return asSortedByVotes(action.data)
     default:
       return state
   }
 }
 
-export const createAnecdote = (data) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    data
+export const createAnecdote = content => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: newAnecdote
+    })
   }
 }
 
-export const voteOnId = id => {
-  return {
-    type: 'VOTE',
-    id
+export const voteOnId = anecdote => {
+  return async dispatch => {
+    const updatedAnecdote = await anecdoteService.increaseExistingVotes(anecdote)
+    dispatch({
+      type: 'VOTE',
+      id: updatedAnecdote.id
+    })
   }
 }
 
-export const initializeAnecdotes = (anecdotes) => {
-  return {
-    type: 'INIT_ANECDOTES',
-    data: anecdotes
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({
+      type: 'INIT_ANECDOTES',
+      data: anecdotes
+    })
   }
 }
 

@@ -1,14 +1,7 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { notificationChange, removeNotification } from '../reducers/notificationReducer'
+import React                  from 'react'
+import { connect }            from 'react-redux'
 
 const Notification = (props) => {
-  if (props.notification !== null) {
-    setTimeout(() => {
-      props.removeNotification()
-    }, 5000)
-  }
-
   const style = {
     border: 'solid',
     padding: 10,
@@ -28,14 +21,9 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = {
-  notificationChange,
-  removeNotification
-}
-
 const ConnectedNotification = connect(
   mapStateToProps,
-  mapDispatchToProps
+  null
 )(Notification)
 
 export default ConnectedNotification
