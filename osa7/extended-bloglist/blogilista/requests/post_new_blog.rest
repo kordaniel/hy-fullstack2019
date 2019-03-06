@@ -1,0 +1,57 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVuZG9zIiwiaWQiOiI1YzZhMjcxMGE3MjVjYzI0NGIwYTk1MTUiLCJpYXQiOjE1NTA0NjUyMDN9.SrVFL6iRfd4o1DaItVYKdwIfYOaiItwROzZ-OzmfCoY
+
+{
+  "title": "tokenExtraktor toiminnassa... ehkä?",
+  "author": "Dan K",
+  "url": "https://wwww.mahtavaa.netti",
+  "likes": 2
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRvZG9zIiwiaWQiOiI1YzZhMjcxM2E3MjVjYzI0NGIwYTk1MTYiLCJpYXQiOjE1NTA0NjU0NTN9.IC0FNdrIoFeq9XJteJnPYds_ygQJ6RvexPfkxrPbcLg
+
+{
+  "title": "Toisen käyttäjän token tokenExtraktorilla, toimii?",
+  "author": "Dan K",
+  "url": "https://wwww.mahtavaa.netti",
+  "likes": 22
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Blogi Testitietokantaan",
+  "author": "D K",
+  "url": "https://www",
+  "likes": 2
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "author": "Dan Kor",
+  "url": "http://www.toimivaosoite.fi/",
+  "likes": 2
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Blog post without likes",
+  "author": "So Sad",
+  "url": "http://iwantlikesGimmeSomeLikes.com/"
+}
