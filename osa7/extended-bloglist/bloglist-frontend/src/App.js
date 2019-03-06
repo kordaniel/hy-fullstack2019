@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+
 import Blog from './components/Blog'
 import NewBlogForm from './components/newblogform'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/togglable'
+import Notification from './components/Notification'
 import { useField } from './hooks'
-
+import { setNotification } from './reducers/notificationReducer'
+/*
 const Notification = ({ message }) => {
   if (message === null) {
     return null
@@ -16,7 +20,7 @@ const Notification = ({ message }) => {
     </div>
   )
 }
-
+*/
 const ErrorNotification = ({ message }) => {
   if (message === null) {
     return null
@@ -28,7 +32,10 @@ const ErrorNotification = ({ message }) => {
   )
 }
 
-const App = () => {
+const App = (props) => {
+  
+  //store.dispatch(setNotification('bläbläblä', 10))
+  
   const { reset: clearUsername, ...username } = useField('text')
   const { reset: clearPassowrd, ...password } = useField('password')
   const { reset: clearNewBlogTitle, ...newBlogTitle } = useField('text')
@@ -196,7 +203,7 @@ const App = () => {
   const increaseBlogLikes = async id => {
     const blog = blogs.find(b => b.id === id)
     const changedBlog = { ...blog, likes: blog.likes + 1 }
-
+    props.setNotification(`You liked blog: '${changedBlog.title}'`)
     try {
       const responseBlog = await blogService.update(changedBlog.id, changedBlog)
       setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
@@ -207,8 +214,8 @@ const App = () => {
 
   return (
     <div>
+      <Notification />
       <ErrorNotification message={errorMessage} />
-      <Notification message={notificationMessage} />
       {user === null ?
         loginForm() :
         blogsRenderer()
@@ -217,4 +224,13 @@ const App = () => {
   )
 }
 
-export default App
+const mapDispatchToProps = {
+  setNotification
+}
+
+const ConnectedApp = connect(
+  null,
+  mapDispatchToProps
+)(App)
+
+export default ConnectedApp

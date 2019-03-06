@@ -3,7 +3,8 @@
   background: lightgrey;
   font-size: 20px;
   border-style: solid;
-  border-radius: 5px;
+  border-radius: 10px;
+  border-width: 3px;
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -13,7 +14,8 @@
   background: lightgrey;
   font-size: 20px;
   border-style: solid;
-  border-radius: 5px;
+  border-radius: 15px;
+  border-width: 6px;
   padding: 10px;
   margin-bottom: 10px;
 }
