@@ -1,26 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 
-import Blog from './components/Blog'
-import NewBlogForm from './components/newblogform'
+import Blogs from './components/Blogs'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Togglable from './components/togglable'
 import Notification from './components/Notification'
 import { useField } from './hooks'
 import { setNotification } from './reducers/notificationReducer'
-/*
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null
-  }
-  return (
-    <div className='notification'>
-      {message}
-    </div>
-  )
-}
-*/
+import { initializeBlogs, createNewBlog, likeBlog } from './reducers/blogReducerer'
+
 const ErrorNotification = ({ message }) => {
   if (message === null) {
     return null
@@ -33,26 +21,14 @@ const ErrorNotification = ({ message }) => {
 }
 
 const App = (props) => {
-  
-  //store.dispatch(setNotification('bläbläblä', 10))
-  
+  const [user, setUser] = useState(null)
   const { reset: clearUsername, ...username } = useField('text')
   const { reset: clearPassowrd, ...password } = useField('password')
-  const { reset: clearNewBlogTitle, ...newBlogTitle } = useField('text')
-  const { reset: clearNewBlogAuthor, ...newBlogAuthor } = useField('text')
-  const { reset: clearNewBlogUrl, ...newBlogUrl } = useField('text')
 
-  const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-
-  const newBlogFormRef = React.createRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    props.initializeBlogs()
   }, [])
 
   useEffect(() => {
@@ -64,13 +40,6 @@ const App = (props) => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  const showNotification = message => {
-    setNotificationMessage(message)
-    setTimeout(() => {
-      setNotificationMessage(null)
-    }, 3000)
-  }
 
   const showErrorMessage = message => {
     setErrorMessage(message)
@@ -93,7 +62,7 @@ const App = (props) => {
 
       blogService.setToken(user.token)
       setUser(user)
-      showNotification(`${user.name} logged in with username '${user.username}'`)
+      //showNotification(`${user.name} logged in with username '${user.username}'`)
       clearUsername()
       clearPassowrd()
     } catch (exception) {
@@ -108,20 +77,21 @@ const App = (props) => {
     blogService.setToken(null)
   }
 
-  const handleNewBlog = async (event) => {
-    event.preventDefault()
+  //const handleNewBlog = async (event) => {
+  //  event.preventDefault()
 
-    const newBlog = {
-      title: newBlogTitle.value,
-      author: newBlogAuthor.value,
-      url: newBlogUrl.value,
-    }
-
+  //  const newBlog = {
+  //    title: newBlogTitle.value,
+  //    author: newBlogAuthor.value,
+  //    url: newBlogUrl.value,
+  //  }
+  //  props.createNewBlog(newBlog)
+    /*
     blogService.create(newBlog)
       .then(response => {
         newBlogFormRef.current.toggleVisibility()
-        setBlogs(blogs.concat(response))
-        showNotification(`A new blog ${response.title} by ${response.author} added`)
+        /////////////setBlogs(blogs.concat(response))
+        //showNotification(`A new blog ${response.title} by ${response.author} added`)
         clearNewBlogTitle()
         clearNewBlogAuthor()
         clearNewBlogUrl()
@@ -129,8 +99,8 @@ const App = (props) => {
       .catch(error => {
         showErrorMessage('Error adding blog')
         console.log('error creating new blog', error)
-      })
-  }
+      })*/
+  //}
 
   const loginForm = () => (
     <div className='login'>
@@ -155,7 +125,7 @@ const App = (props) => {
       <button onClick={handleLogout}>logout</button>
     </div>
   )
-
+/*
   const blogsRenderer = () => (
     <div className='blogs'>
       <h2>blogs</h2>
@@ -170,7 +140,7 @@ const App = (props) => {
         />
       </Togglable>
 
-      {blogs
+      {props.blogs
         .sort((a,b) => b.likes - a.likes)
         .map(blog =>
           <Blog
@@ -182,35 +152,7 @@ const App = (props) => {
         )}
     </div>
   )
-
-  const removeBlog = async id => {
-    const blog = blogs.find(b => b.id === id)
-
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
-      return
-    }
-
-    try {
-      await blogService.remove(id)
-      setBlogs(blogs.filter(b => b.id !== id))
-      showNotification(`${blog.title} deleted`)
-    } catch (exception) {
-      console.log('virhe poistettaessa blogia', exception)
-      showErrorMessage(`Error when deleting blog ${blog.title}`)
-    }
-  }
-
-  const increaseBlogLikes = async id => {
-    const blog = blogs.find(b => b.id === id)
-    const changedBlog = { ...blog, likes: blog.likes + 1 }
-    props.setNotification(`You liked blog: '${changedBlog.title}'`)
-    try {
-      const responseBlog = await blogService.update(changedBlog.id, changedBlog)
-      setBlogs(blogs.map(b => b.id !== id ? b : responseBlog))
-    } catch (exception) {
-      console.log('virhe kasvatettaessa tykkayksia', exception)
-    }
-  }
+  */
 
   return (
     <div>
@@ -218,18 +160,31 @@ const App = (props) => {
       <ErrorNotification message={errorMessage} />
       {user === null ?
         loginForm() :
-        blogsRenderer()
+        <>
+          {loggedInUserRenderer()}
+          <Blogs username={user ? user.username : undefined}
+          />
+        </>
       }
     </div>
   )
 }
 
+const mapStateToProps = (state) => {
+  return {
+    blogs: state.blogs
+  }
+}
+
 const mapDispatchToProps = {
-  setNotification
+  setNotification,
+  initializeBlogs,
+  createNewBlog,
+  likeBlog
 }
 
 const ConnectedApp = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(App)
 

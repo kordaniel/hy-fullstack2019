@@ -1,6 +1,6 @@
 import React, { useState, useImperativeHandle } from 'react'
 import PropTypes from 'prop-types'
-
+//RENAME FILE TO Togglable, with capital letter!!
 const Togglable = React.forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false)
 

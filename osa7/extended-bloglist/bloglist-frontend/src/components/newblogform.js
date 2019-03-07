@@ -1,11 +1,34 @@
-import React from 'react'
+import React                from 'react'
+import { connect }          from 'react-redux'
 
-const NewBlogForm = ({
-  handleNewBlog,
-  newBlogTitle,
-  newBlogAuthor,
-  newBlogUrl
-}) => {
+import { useField }         from '../hooks/index'
+import { createNewBlog }    from '../reducers/blogReducerer'
+import { setNotification }  from '../reducers/notificationReducer'
+
+const NewBlogForm = (props) => {
+  const { reset: clearNewBlogTitle, ...newBlogTitle } = useField('text')
+  const { reset: clearNewBlogAuthor, ...newBlogAuthor } = useField('text')
+  const { reset: clearNewBlogUrl, ...newBlogUrl } = useField('text')
+
+  const clearAllFields = () => {
+    clearNewBlogTitle()
+    clearNewBlogAuthor()
+    clearNewBlogUrl()
+  }
+
+  const handleNewBlog = (event) => {
+    event.preventDefault()
+    const newBlog = {
+      title: newBlogTitle.value,
+      author: newBlogAuthor.value,
+      url: newBlogUrl.value,
+    }
+    props.createNewBlog(newBlog)
+    clearAllFields()
+    props.setNotification(`A new blog ${newBlog.title} by ${newBlog.author} added`)
+    props.toggleVisibility.current.toggleVisibility()
+  }
+
   return (
     <div>
       <h2>create new</h2>
@@ -29,4 +52,10 @@ const NewBlogForm = ({
   )
 }
 
-export default NewBlogForm
+const mapDispatchToProps = {
+  createNewBlog,
+  setNotification
+}
+
+const ConnectedNewBlogForm = connect(null, mapDispatchToProps)(NewBlogForm)
+export default ConnectedNewBlogForm

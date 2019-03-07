@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
-const Blog = ({ blog, increaseBlogLikes, removeBlogHandler, loggedInUsername }) => {
+import { connect } from 'react-redux'
+import { setNotification } from '../reducers/notificationReducer'
+import { likeBlog, removeBlog } from '../reducers/blogReducerer'
+
+const Blog = (props) => {
   const [detailsVisible, setDetailsVisible] = useState(false)
   const showWhenDetailsHidden  = { display: detailsVisible ? 'none' : '' }
   const showWhenDetailsVisible = { display: detailsVisible ? '' : 'none' }
-  const showWhenUsersOwnBlog = { display: loggedInUsername && loggedInUsername === blog.user.username ? '' : 'none' }
+  const showWhenUsersOwnBlog = { display: props.loggedInUsername && props.loggedInUsername === props.blog.user.username ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -13,20 +17,39 @@ const Blog = ({ blog, increaseBlogLikes, removeBlogHandler, loggedInUsername }) 
     marginBottom: 5
   }
 
+  const incrementLikes = () => {
+    props.likeBlog(props.blog)
+    props.setNotification(`You liked blog: '${props.blog.title}'`)
+  }
+
+  const deleteBlog = () => {
+    if (window.confirm(`Remove blog ${props.blog.title} by ${props.blog.author} ?`)) {
+      props.removeBlog(props.blog.id)
+      props.setNotification(`Blog ${props.blog.title} by ${props.blog.author} deleted`)
+    }
+  }
+
   return (
     <div style={blogStyle} className='blog' onClick={() => setDetailsVisible(!detailsVisible)}>
       <div style={showWhenDetailsHidden} className='blogTitle'>
-        {blog.title} {blog.author}
+        {props.blog.title} {props.blog.author}
       </div>
       <div style={showWhenDetailsVisible} className='blogDetails'>
-        <div>{blog.title} {blog.author}</div>
-        <div><a href={blog.url}>{blog.url}</a></div>
-        <div>{blog.likes} likes <button onClick={increaseBlogLikes}>like</button></div>
-        <div>Added by {blog.user ? blog.user.name : ''}</div>
-        <div><button style={showWhenUsersOwnBlog} onClick={removeBlogHandler}>Remove</button></div>
+        <div>{props.blog.title} {props.blog.author}</div>
+        <div><a href={props.blog.url}>{props.blog.url}</a></div>
+        <div>{props.blog.likes} likes <button onClick={incrementLikes}>like</button></div>
+        <div>Added by {props.blog.user ? props.blog.user.name : ''}</div>
+        <div><button style={showWhenUsersOwnBlog} onClick={deleteBlog}>Remove</button></div>
       </div>
     </div>
   )
 }
 
-export default Blog
+const mapDispatchToProps = {
+  setNotification,
+  likeBlog,
+  removeBlog
+}
+
+const ConnectedBlog = connect(null, mapDispatchToProps)(Blog)
+export default ConnectedBlog
