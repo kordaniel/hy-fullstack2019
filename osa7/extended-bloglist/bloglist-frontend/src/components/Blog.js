@@ -7,7 +7,8 @@ const Blog = (props) => {
   const [detailsVisible, setDetailsVisible] = useState(false)
   const showWhenDetailsHidden  = { display: detailsVisible ? 'none' : '' }
   const showWhenDetailsVisible = { display: detailsVisible ? '' : 'none' }
-  const showWhenUsersOwnBlog = { display: props.loggedInUsername && props.loggedInUsername === props.blog.user.username ? '' : 'none' }
+  const showWhenUsersOwnBlog = { display: props.user.username
+    && props.user.username === props.blog.user.username ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -17,10 +18,7 @@ const Blog = (props) => {
     marginBottom: 5
   }
 
-  const incrementLikes = () => {
-    props.likeBlog(props.blog)
-    props.setNotification(`You liked blog: '${props.blog.title}'`)
-  }
+  const incrementLikes = () => props.likeBlog(props.blog)
 
   const deleteBlog = () => {
     if (window.confirm(`Remove blog ${props.blog.title} by ${props.blog.author} ?`)) {
@@ -45,11 +43,17 @@ const Blog = (props) => {
   )
 }
 
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
+}
+
 const mapDispatchToProps = {
   setNotification,
   likeBlog,
   removeBlog
 }
 
-const ConnectedBlog = connect(null, mapDispatchToProps)(Blog)
+const ConnectedBlog = connect(mapStateToProps, mapDispatchToProps)(Blog)
 export default ConnectedBlog

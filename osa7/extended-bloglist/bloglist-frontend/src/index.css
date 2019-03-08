@@ -1,3 +1,8 @@
+.menu {
+  background: lightslategrey;
+  padding: 5px;
+}
+
 .notification {
   color: green;
   background: lightgrey;

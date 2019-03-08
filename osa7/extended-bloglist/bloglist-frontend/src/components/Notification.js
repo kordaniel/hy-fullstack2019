@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 const Notification = ({ notification }) => (
-  <div style={notification.style} className='notification'>
+  <div style={notification.style} className={notification.classname}>
     {notification.message}
   </div>
 )

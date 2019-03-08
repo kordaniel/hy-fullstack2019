@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 
-import Togglable from './togglable'
-import NewBlogForm from './newblogform';
-import Blog from './Blog';
+import Togglable from './Togglable'
+import NewBlogForm from './Newblogform'
+import Blog from './Blog'
 
 const Blogs = (props) => {
   const newBlogFormRef = React.createRef()
@@ -21,12 +21,11 @@ const Blogs = (props) => {
         />
       </Togglable>
       {props.blogs
-        .sort((a,b) => b.likes - a.likes)
         .map(blog =>
           <Blog
             key={blog.id}
             blog={blog}
-            loggedInUsername={props.username ? props.username : undefined} />
+          />
         )}
     </div>
   )

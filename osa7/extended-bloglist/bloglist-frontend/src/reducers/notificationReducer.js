@@ -1,4 +1,8 @@
-const initialState = { message: '', style: { display: 'none' } }
+const initialState = {
+  message: '',
+  style: { display: 'none' },
+  classname: ''
+}
 
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -11,21 +15,32 @@ const notificationReducer = (state = initialState, action) => {
   }
 }
 
-export const setNotification = (notification, seconds = 5) => {
-  /*
-  return {
-    type: 'SET_NOTIFICATION',
-    notification,
-  }*/
-  //return async dispatch
-
+export const setNotification = (message, seconds = 5) => {
   return dispatch => {
-    //await dispatch and setTimeout
     dispatch({
       type: 'SET_NOTIFICATION',
       notification: {
-        message: notification,
-        style: { display: '' }
+        message,
+        style: { display: '' },
+        classname: 'notification'
+      }
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'CLEAR_NOTIFICATION'
+      })
+    }, seconds * 1000)
+  }
+}
+
+export const setErrorNotification = (message, seconds = 5) => {
+  return dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      notification: {
+        message,
+        style: { display: '' },
+        classname: 'error'
       }
     })
     setTimeout(() => {

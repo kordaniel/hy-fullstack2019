@@ -1,18 +1,23 @@
 import blogService from '../services/blogs'
+import { setNotification, setErrorNotification } from './notificationReducer'
 
 const initialState = []
+
+const byLikes = (b1, b2) => b2.likes - b1.likes
 
 const blogReducerer = (state = initialState, action) => {
   switch (action.type) {
   case 'NEW_BLOG':
     return [...state, action.data]
   case 'INCREMENT_BLOG_LIKES':
-    return state.map(blog =>
-      blog.id !== action.data.id ? blog : action.data)
+    return state
+      .map(blog =>
+        blog.id !== action.data.id ? blog : action.data)
+      .sort(byLikes)
   case 'REMOVE_BLOG':
     return state.filter(blog => blog.id !== action.id)
   case 'INIT_BLOGS':
-    return action.data
+    return action.data.sort(byLikes)
   default:
     return state
   }
@@ -27,8 +32,10 @@ export const likeBlog = blog => {
         type: 'INCREMENT_BLOG_LIKES',
         data: responseBlog
       })
+      console.log(responseBlog)
+      dispatch(setNotification(`You liked blog: '${responseBlog.title}'`))
     } catch (e) {
-      console.log('ERROR incrementing blog likes:', e)
+      dispatch(setErrorNotification(`Error: Cannot like blog '${changedBlog.title}`))
     }
   }
 }
@@ -70,7 +77,7 @@ export const initializeBlogs = () => {
         data: blogs
       })
     } catch (e) {
-      console.log('ERROR loading blogs:', e)
+      dispatch(setErrorNotification('Error loading blogs....', 30))
     }
   }
 }
