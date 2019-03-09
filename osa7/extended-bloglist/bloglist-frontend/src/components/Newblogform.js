@@ -1,7 +1,7 @@
 import React                from 'react'
 import { connect }          from 'react-redux'
 
-import { useField }         from '../hooks/index'
+import { useField }         from '../hooks/useField'
 import { createNewBlog }    from '../reducers/blogReducerer'
 import { setNotification }  from '../reducers/notificationReducer'
 

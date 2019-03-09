@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import { loginUser } from '../reducers/userReducer'
-import { useField } from '../hooks/index'
+import { useField } from '../hooks/useField'
 
 const LoginFormNoHistory = (props) => {
   const { reset: clearUsername, ...username } = useField('text')
