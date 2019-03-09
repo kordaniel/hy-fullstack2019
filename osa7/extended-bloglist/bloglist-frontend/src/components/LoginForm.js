@@ -6,8 +6,10 @@ import { loginUser } from '../reducers/userReducer'
 import { useField } from '../hooks/useField'
 
 const LoginFormNoHistory = (props) => {
-  const { reset: clearUsername, ...username } = useField('text')
-  const { reset: clearPassword, ...password } = useField('password')
+  //const { reset: clearUsername, ...username } = useField('text')
+  //const { reset: clearPassword, ...password } = useField('password')
+  const [username, clearUsername] = useField('text')
+  const [password, clearPassword] = useField('password')
 
   const handleLogin = (event) => {
     event.preventDefault()

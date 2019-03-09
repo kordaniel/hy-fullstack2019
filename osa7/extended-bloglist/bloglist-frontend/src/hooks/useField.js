@@ -9,12 +9,11 @@ export const useField = (type) => {
 
   const reset = () => setValue('')
 
-  return {
+  return [{
     type,
     value,
-    onChange,
-    reset
-  }
+    onChange
+  }, reset]
 }
 
 //moduulissa voi nyt olla monta nimettya eksportia

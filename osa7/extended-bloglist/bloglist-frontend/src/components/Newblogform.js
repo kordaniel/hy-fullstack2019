@@ -6,22 +6,28 @@ import { createNewBlog }    from '../reducers/blogReducerer'
 import { setNotification }  from '../reducers/notificationReducer'
 
 const NewBlogForm = (props) => {
-  const { reset: clearNewBlogTitle, ...newBlogTitle } = useField('text')
-  const { reset: clearNewBlogAuthor, ...newBlogAuthor } = useField('text')
-  const { reset: clearNewBlogUrl, ...newBlogUrl } = useField('text')
+  //const { reset: clearNewBlogTitle, ...newBlogTitle } = useField('text')
+  //const { reset: clearNewBlogAuthor, ...newBlogAuthor } = useField('text')
+  //const { reset: clearNewBlogUrl, ...newBlogUrl } = useField('text')
+  const [title, titleReset] = useField('text')
+  const [author, authorReset] = useField('text')
+  const [url, urlReset] = useField('text')
 
   const clearAllFields = () => {
-    clearNewBlogTitle()
-    clearNewBlogAuthor()
-    clearNewBlogUrl()
+    //clearNewBlogTitle()
+    //clearNewBlogAuthor()
+    //clearNewBlogUrl()
+    titleReset()
+    authorReset()
+    urlReset()
   }
 
   const handleNewBlog = (event) => {
     event.preventDefault()
     const newBlog = {
-      title: newBlogTitle.value,
-      author: newBlogAuthor.value,
-      url: newBlogUrl.value,
+      title: title.value,
+      author: author.value,
+      url: url.value,
     }
     props.createNewBlog(newBlog)
     clearAllFields()
@@ -36,15 +42,15 @@ const NewBlogForm = (props) => {
       <form onSubmit={handleNewBlog}>
         <div>
           title
-          <input { ...newBlogTitle } />
+          <input { ...title } />
         </div>
         <div>
           author
-          <input { ...newBlogAuthor } />
+          <input { ...author } />
         </div>
         <div>
           url
-          <input { ...newBlogUrl } />
+          <input { ...url } />
         </div>
         <button type="submit">create</button>
       </form>

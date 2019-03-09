@@ -12,14 +12,38 @@ const blogReducerer = (state = initialState, action) => {
   case 'INCREMENT_BLOG_LIKES':
     return state
       .map(blog =>
-        blog.id !== action.data.id ? blog : action.data)
+        blog.id !== action.data.id
+          ? blog
+          : action.data
+      )
       .sort(byLikes)
+  case 'ADD_COMMENT':
+    return state
+      .map(blog =>
+        blog.id !== action.data.id
+          ? blog
+          : action.data
+      )
   case 'REMOVE_BLOG':
     return state.filter(blog => blog.id !== action.id)
   case 'INIT_BLOGS':
     return action.data.sort(byLikes)
   default:
     return state
+  }
+}
+
+export const addComment = (blogId, comment) => {
+  return async dispatch => {
+    try {
+      const responseBlog = await blogService.createComment(blogId, { comment })
+      dispatch({
+        type: 'ADD_COMMENT',
+        data: responseBlog
+      })
+    } catch (e) {
+      console.log('ERROR Posting new comment', e)
+    }
   }
 }
 

@@ -2,8 +2,9 @@ import React          from 'react'
 import { connect }    from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import { setNotification } from '../reducers/notificationReducer'
-import { likeBlog, removeBlog } from '../reducers/blogReducerer'
+import { useField }             from '../hooks/useField'
+import { setNotification }      from '../reducers/notificationReducer'
+import { likeBlog, removeBlog, addComment } from '../reducers/blogReducerer'
 
 const BlogNoHistory = (props) => {
   const blog = props.blogs.find(b => b.id === props.id)
@@ -13,6 +14,14 @@ const BlogNoHistory = (props) => {
         <h2>No blog in here...</h2>
       </div>
     )
+  }
+
+  const [comment, clearComment] = useField('text')
+
+  const handleNewComment = (event) => {
+    event.preventDefault()
+    clearComment()
+    props.addComment(blog.id, comment.value)
   }
 
   const showWhenUsersOwnBlog = { display: props.user.username
@@ -42,6 +51,10 @@ const BlogNoHistory = (props) => {
       <div><button style={showWhenUsersOwnBlog} onClick={deleteBlog}>Remove</button></div>
       <div>
         <h3>Comments</h3>
+        <form onSubmit={handleNewComment}>
+          <input { ...comment } />
+          <button type='submit'>Add comment</button>
+        </form>
         <ul>
           {blog.comments.length === 0
             ? <li>No comments</li>
@@ -65,6 +78,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   setNotification,
   likeBlog,
+  addComment,
   removeBlog
 }
 
