@@ -8,12 +8,14 @@ import { connect } from 'react-redux'
 import Users        from './components/Users'
 import User         from './components/User'
 import Blogs        from './components/Blogs'
+import Blog         from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm    from './components/LoginForm'
 
 import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createNewBlog, likeBlog } from './reducers/blogReducerer'
 import { loadUserFromLocalstorage, loginUser, logoutUser } from './reducers/userReducer'
+import { initializeUsers } from './reducers/statisticsReducer'
 
 
 
@@ -24,15 +26,22 @@ const App = (props) => {
 
   useEffect(() => {
     props.initializeBlogs()
+    props.initializeUsers()
   }, [])
+
+  //useEffect(() => {
+    
+  //}, [])
 
   const handleLogout = () => {
     props.logoutUser(props.user)
   }
 
-  console.log('state', props.user)
-  console.log('blogit', props.blogs)
-
+  //console.log('state', props.user)
+  //console.log('blogit', props.blogs)
+  //props.initializeUsers()
+  
+  //console.log('stat', props.users)
   const padding = { padding: 5 }
 
   return (
@@ -51,7 +60,9 @@ const App = (props) => {
           <Notification />
           <h1>Blog app</h1>
           <Route path='/login' render={() => <LoginForm />} />
-          <Route path='/blogs' render={() => <Blogs />} />
+          <Route exact path='/blogs' render={() => <Blogs />} />
+          <Route exact path='/blogs/:id' render={({ match }) =>
+            <Blog id={match.params.id} />} />
           <Route exact path='/users' render={() => <Users />} />
           <Route exact path='/users/:id' render={({ match }) =>
             <User id={match.params.id} />} />
@@ -64,7 +75,8 @@ const App = (props) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    blogs: state.blogs
+    blogs: state.blogs,
+    users: state.users
   }
 }
 
@@ -75,7 +87,8 @@ const mapDispatchToProps = {
   setNotification,
   initializeBlogs,
   createNewBlog,
-  likeBlog
+  likeBlog,
+  initializeUsers
 }
 
 const ConnectedApp = connect(

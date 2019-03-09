@@ -32,7 +32,6 @@ export const likeBlog = blog => {
         type: 'INCREMENT_BLOG_LIKES',
         data: responseBlog
       })
-      console.log(responseBlog)
       dispatch(setNotification(`You liked blog: '${responseBlog.title}'`))
     } catch (e) {
       dispatch(setErrorNotification(`Error: Cannot like blog '${changedBlog.title}`))

@@ -1,50 +1,61 @@
-import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import React          from 'react'
+import { connect }    from 'react-redux'
+import { withRouter } from 'react-router-dom'
+
 import { setNotification } from '../reducers/notificationReducer'
 import { likeBlog, removeBlog } from '../reducers/blogReducerer'
 
-const Blog = (props) => {
-  const [detailsVisible, setDetailsVisible] = useState(false)
-  const showWhenDetailsHidden  = { display: detailsVisible ? 'none' : '' }
-  const showWhenDetailsVisible = { display: detailsVisible ? '' : 'none' }
+const BlogNoHistory = (props) => {
+  const blog = props.blogs.find(b => b.id === props.id)
+  if (!blog) {
+    return (
+      <div>
+        <h2>No blog in here...</h2>
+      </div>
+    )
+  }
+
   const showWhenUsersOwnBlog = { display: props.user.username
-    && props.user.username === props.blog.user.username ? '' : 'none' }
+    && props.user.username === blog.user.username ? '' : 'none' }
 
   const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
+    paddingLeft: 1,
     marginBottom: 5
   }
 
-  const incrementLikes = () => props.likeBlog(props.blog)
+  const incrementLikes = () => props.likeBlog(blog)
 
   const deleteBlog = () => {
-    if (window.confirm(`Remove blog ${props.blog.title} by ${props.blog.author} ?`)) {
-      props.removeBlog(props.blog.id)
-      props.setNotification(`Blog ${props.blog.title} by ${props.blog.author} deleted`)
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
+      props.removeBlog(blog.id)
+      props.setNotification(`Blog ${blog.title} by ${blog.author} deleted`)
+      props.history.push('/blogs')
     }
   }
 
   return (
-    <div style={blogStyle} className='blog' onClick={() => setDetailsVisible(!detailsVisible)}>
-      <div style={showWhenDetailsHidden} className='blogTitle'>
-        {props.blog.title} {props.blog.author}
-      </div>
-      <div style={showWhenDetailsVisible} className='blogDetails'>
-        <div>{props.blog.title} {props.blog.author}</div>
-        <div><a href={props.blog.url}>{props.blog.url}</a></div>
-        <div>{props.blog.likes} likes <button onClick={incrementLikes}>like</button></div>
-        <div>Added by {props.blog.user ? props.blog.user.name : ''}</div>
-        <div><button style={showWhenUsersOwnBlog} onClick={deleteBlog}>Remove</button></div>
+    <div style={blogStyle} className='blogInfo'>
+      <h2>{blog.title} by {blog.author}</h2>
+      <div><a href={blog.url}>{blog.url}</a></div>
+      <div>{blog.likes} likes <button onClick={incrementLikes}>like</button></div>
+      <div>Added by {blog.user ? blog.user.name : '-'}</div>
+      <div><button style={showWhenUsersOwnBlog} onClick={deleteBlog}>Remove</button></div>
+      <div>
+        <h3>Comments</h3>
+        <ul>
+          <li>Implement comments</li>
+          <li>There might be several comments</li>
+        </ul>
       </div>
     </div>
   )
 }
 
+const Blog = withRouter(BlogNoHistory)
+
 const mapStateToProps = (state) => {
   return {
+    blogs: state.blogs,
     user: state.user
   }
 }

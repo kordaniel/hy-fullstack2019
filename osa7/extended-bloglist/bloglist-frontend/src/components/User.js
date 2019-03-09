@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from 'react'
-import userService from '../services/users'
+import React from 'react'
+import { connect } from 'react-redux'
 
-const User = ({ id }) => {
-  const [user, setUser] = useState(null)
-  useEffect(async () => {
-    setUser(await userService.getUser(id))
-  }, [])
+const User = (props) => {
+  const selectedUser = props.users.find(u => u.id === props.id)
+  if (!selectedUser) return null
 
-
-  if (user) {
-    console.log(user)
-    return (
-      <div>
-        <h2>{user.name}</h2>
-        <h3>Added blogs</h3>
-        <ul>
-          {user.blogs.map(b => <li key={b.id}>{b.title}</li>)}
-        </ul>
-      </div>
-    )
-  }
-
-  return null
+  return (
+    <div>
+      <h2>{selectedUser.name}</h2>
+      <h3>Added blogs</h3>
+      <ul>
+        {selectedUser.blogs.length === 0
+          ? <li>User has not added any blogs</li>
+          : selectedUser.blogs.map(b => <li key={b.id}>{b.title}</li>)}
+      </ul>
+    </div>
+  )
 }
 
-export default User
+//tama pitaa viela refaktoroida niin etta tulee vain yksi (valittu)kayttaja
+const mapStateToProps = (state) => {
+  return {
+    users: state.users
+  }
+}
+
+const ConnectedUser = connect(mapStateToProps)(User)
+export default ConnectedUser

@@ -14,7 +14,7 @@ const LoginFormNoHistory = (props) => {
     props.loginUser(username.value, password.value)
     clearUsername()
     clearPassword()
-    props.history.push('/')
+    props.history.push('/blogs')
   }
 
   return (

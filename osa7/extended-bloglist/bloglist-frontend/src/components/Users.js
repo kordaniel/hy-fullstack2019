@@ -1,18 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 
-import usersService from '../services/users'
-
-const Users = () => {
-  //TEHTÄVÄ 7.7 KESKEN!!!!!
-  const [users, setUsers] = useState([])
-
-  useEffect(async () => {
-    const all = await usersService.getAll()
-    setUsers(all)
-    //setUsers([{id: 'sadfasfsaa', name: 'undos', blogs: [{p:'sdad'},{p:'asd'}]}])
-  }, [])
-
+const Users = ({ users }) => {
   const toTableRows = (u) =>
     <tr key={u.id}><td><Link to={`/users/${u.id}`}>{u.name}</Link></td><td>{u.blogs.length}</td></tr>
 
@@ -29,4 +19,12 @@ const Users = () => {
   )
 }
 
-export default Users
+const mapStateToProps = (state) => {
+  return {
+    users: state.users
+  }
+}
+
+const ConnectedUsers = connect(mapStateToProps)(Users)
+
+export default ConnectedUsers
