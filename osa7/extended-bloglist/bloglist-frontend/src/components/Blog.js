@@ -43,8 +43,10 @@ const BlogNoHistory = (props) => {
       <div>
         <h3>Comments</h3>
         <ul>
-          <li>Implement comments</li>
-          <li>There might be several comments</li>
+          {blog.comments.length === 0
+            ? <li>No comments</li>
+            : blog.comments.map(c =>
+              <li key={c.id}>{c.content}</li>)}
         </ul>
       </div>
     </div>

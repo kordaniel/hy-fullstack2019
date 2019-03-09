@@ -1,12 +1,15 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const logger = require('../utils/logger')
 
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog
-    .find({}).populate('user', { blogs: 0 })
+    .find({})
+    .populate('user', { blogs: 0 })
+    .populate('comments', { blog: 0 })
   res.json(blogs.map(b => b.toJSON()))
 })
 
@@ -21,6 +24,28 @@ blogsRouter.get('/:id', async (req, res, next) => {
     }
   } catch (exception) {
     next(exception)
+  }
+})
+
+blogsRouter.post('/:id/comments', async (req, res, next) => {
+  const body = req.body
+  try {
+    const blog = await Blog.findById(req.params.id)
+    if (blog) {
+      const newComment = new Comment({
+        content: body.comment,
+        blog: blog._id
+      })
+      const savedComment = await newComment.save()
+      blog.comments = blog.comments.concat(savedComment._id)
+      await blog.save()
+      res.status(201).json(savedComment.toJSON())
+    } else {
+      logger.error('error saving comment')
+      res.status(404).end()
+    }
+  } catch (e) {
+    next(e)
   }
 })
 
