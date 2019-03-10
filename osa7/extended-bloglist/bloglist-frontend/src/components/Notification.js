@@ -19,7 +19,7 @@ const Notification = ({ notification }) => {
       )
     }
   }
-  //eihan tama vie mitaan tilla, voisi palauttaa nullin..?
+  //eihan tama vie mitaan tilaa, voisi palauttaa nullin..?
   return (
     <Message hidden>
       Placeholder

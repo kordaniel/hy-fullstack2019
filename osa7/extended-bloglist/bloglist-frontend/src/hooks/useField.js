@@ -15,13 +15,3 @@ export const useField = (type) => {
     onChange
   }, reset]
 }
-
-//moduulissa voi nyt olla monta nimettya eksportia
-//export const useAnotherHook = (type) => {
-//  const [value, setValue] = useState('')
-//  //...
-//  return {
-//    type,
-//    value
-//  }
-//}

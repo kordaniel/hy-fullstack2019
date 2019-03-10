@@ -21,8 +21,8 @@ const BlogNoHistory = (props) => {
 
   const handleNewComment = (event) => {
     event.preventDefault()
-    clearComment()
     props.addComment(blog.id, comment.value)
+    clearComment()
   }
 
   const showWhenUsersOwnBlog = { display: props.user.username

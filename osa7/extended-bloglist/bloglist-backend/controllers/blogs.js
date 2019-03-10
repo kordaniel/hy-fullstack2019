@@ -46,7 +46,8 @@ blogsRouter.post('/:id/comments', async (req, res, next) => {
       const savedComment = await newComment.save()
       blog.comments = blog.comments.concat(savedComment._id)
       const savedBlog = await blog.save()
-      const populatedSavedBlog = await savedBlog.populate('comments', { blog: 0 }).execPopulate()
+      const populatedSavedBlog = await savedBlog
+        .populate('comments', { blog: 0 }).execPopulate()
 
       res.status(201).json(populatedSavedBlog.toJSON())
     } else {
@@ -60,7 +61,6 @@ blogsRouter.post('/:id/comments', async (req, res, next) => {
 
 blogsRouter.post('/', async (req, res, next) => {
   const body = req.body
-
   //const token = getTokenFrom(req)
   try {
     //const decodedToken = jwt.verify(token, process.env.SECRET)
@@ -83,9 +83,12 @@ blogsRouter.post('/', async (req, res, next) => {
 
     const savedBlog = await newBlog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
-    
     await user.save()
-    res.status(201).json(savedBlog.toJSON())
+
+    const populatedSavedBlog = await savedBlog
+      .populate('user', { blog: 0 }).execPopulate()
+
+    res.status(201).json(populatedSavedBlog.toJSON())
   } catch (exception) {
     next(exception)
   }
@@ -103,7 +106,9 @@ blogsRouter.put('/:id', async (req, res, next) => {
 
   try {
     const updatedBlog = await Blog.findByIdAndUpdate(
-      req.params.id, blog, { new: true }).populate('user', { blogs: 0 })
+      req.params.id, blog, { new: true })
+      .populate('user', { blogs: 0 })
+      .populate('comments', { blog: 0 })
     res.json(updatedBlog.toJSON())
   } catch (exception) {
     next(exception)

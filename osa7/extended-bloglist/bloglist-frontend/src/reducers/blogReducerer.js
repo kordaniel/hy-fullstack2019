@@ -41,6 +41,7 @@ export const addComment = (blogId, comment) => {
         type: 'ADD_COMMENT',
         data: responseBlog
       })
+      dispatch(setNotification(`You added the comment '${comment}'`))
     } catch (e) {
       console.log('ERROR Posting new comment', e)
     }
@@ -59,6 +60,7 @@ export const likeBlog = blog => {
       dispatch(setNotification(`You liked blog: '${responseBlog.title}'`))
     } catch (e) {
       dispatch(setErrorNotification(`Error: Cannot like blog '${changedBlog.title}`))
+      console.log('ERROR liking blog', e)
     }
   }
 }
@@ -101,6 +103,7 @@ export const initializeBlogs = () => {
       })
     } catch (e) {
       dispatch(setErrorNotification('Error loading blogs....', 30))
+      console.log('ERROR Initializing blogs:', e)
     }
   }
 }

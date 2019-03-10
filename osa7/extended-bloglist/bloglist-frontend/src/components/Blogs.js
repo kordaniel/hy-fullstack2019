@@ -3,8 +3,8 @@ import { Link }     from 'react-router-dom'
 import { connect }  from 'react-redux'
 import { Table }    from 'semantic-ui-react'
 
-import Togglable from './Togglable'
-import NewBlogForm from './Newblogform'
+import Togglable    from './Togglable'
+import NewBlogForm  from './Newblogform'
 
 const Blogs = (props) => {
   const newBlogFormRef = React.createRef()

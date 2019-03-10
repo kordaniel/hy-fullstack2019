@@ -24,6 +24,7 @@ const NewBlogForm = (props) => {
       author: author.value,
       url: url.value,
     }
+
     props.createNewBlog(newBlog)
     clearAllFields()
     props.setNotification(`A new blog ${newBlog.title} by ${newBlog.author} added`)
