@@ -1,22 +1,17 @@
 import React                from 'react'
 import { connect }          from 'react-redux'
+import { Form, Button }     from 'semantic-ui-react'
 
 import { useField }         from '../hooks/useField'
 import { createNewBlog }    from '../reducers/blogReducerer'
 import { setNotification }  from '../reducers/notificationReducer'
 
 const NewBlogForm = (props) => {
-  //const { reset: clearNewBlogTitle, ...newBlogTitle } = useField('text')
-  //const { reset: clearNewBlogAuthor, ...newBlogAuthor } = useField('text')
-  //const { reset: clearNewBlogUrl, ...newBlogUrl } = useField('text')
   const [title, titleReset] = useField('text')
   const [author, authorReset] = useField('text')
   const [url, urlReset] = useField('text')
 
   const clearAllFields = () => {
-    //clearNewBlogTitle()
-    //clearNewBlogAuthor()
-    //clearNewBlogUrl()
     titleReset()
     authorReset()
     urlReset()
@@ -36,24 +31,23 @@ const NewBlogForm = (props) => {
   }
 
   return (
-    <div>
+    <div style={{ marginBottom: 4 }}>
       <h2>create new</h2>
-
-      <form onSubmit={handleNewBlog}>
-        <div>
-          title
+      <Form size='small' onSubmit={handleNewBlog}>
+        <Form.Field>
+          <label>Title</label>
           <input { ...title } />
-        </div>
-        <div>
-          author
+        </Form.Field>
+        <Form.Field>
+          <label>Author</label>
           <input { ...author } />
-        </div>
-        <div>
-          url
+        </Form.Field>
+        <Form.Field>
+          <label>Url</label>
           <input { ...url } />
-        </div>
-        <button type="submit">create</button>
-      </form>
+        </Form.Field>
+        <Button size='small' type="submit">Create</Button>
+      </Form>
     </div>
   )
 }

@@ -1,19 +1,12 @@
 import React        from 'react'
 import { Link }     from 'react-router-dom'
 import { connect }  from 'react-redux'
+import { Table }    from 'semantic-ui-react'
 
 import Togglable from './Togglable'
 import NewBlogForm from './Newblogform'
 
 const Blogs = (props) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   const newBlogFormRef = React.createRef()
 
   return (
@@ -21,23 +14,26 @@ const Blogs = (props) => {
       <h2>Blogs</h2>
       <Togglable buttonLabel='Add new blog' ref={newBlogFormRef}>
         <NewBlogForm
-          handleNewBlog={props.handleNewBlog}
-          newBlogTitle={props.newBlogTitle}
-          newBlogAuthor={props.newBlogAuthor}
-          newBlogUrl={props.newBlogUrl}
           toggleVisibility={newBlogFormRef}
         />
       </Togglable>
-      {props.blogs
-        .map(blog =>
-          <Link key={blog.id} to={`/blogs/${blog.id}`}>
-            <div style={blogStyle} className='blog'>
-              <div className='blogTitle'>
-                {blog.title} {blog.author}
-              </div>
-            </div>
-          </Link>
-        )}
+      <Table striped celled>
+        <Table.Body>
+          {props.blogs
+            .map(blog =>
+              <Table.Row key={blog.id}>
+                <Table.Cell>
+                  <Link to={`/blogs/${blog.id}`}>
+                    {blog.title}
+                  </Link>
+                </Table.Cell>
+                <Table.Cell>
+                  {blog.author}
+                </Table.Cell>
+              </Table.Row>
+            )}
+        </Table.Body>
+      </Table>
     </div>
   )
 }

@@ -1,6 +1,7 @@
-import React          from 'react'
-import { connect }    from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import React                    from 'react'
+import { connect }              from 'react-redux'
+import { withRouter }           from 'react-router-dom'
+import { Form, Button }         from 'semantic-ui-react'
 
 import { useField }             from '../hooks/useField'
 import { setNotification }      from '../reducers/notificationReducer'
@@ -46,15 +47,17 @@ const BlogNoHistory = (props) => {
     <div style={blogStyle} className='blogInfo'>
       <h2>{blog.title} by {blog.author}</h2>
       <div><a href={blog.url}>{blog.url}</a></div>
-      <div>{blog.likes} likes <button onClick={incrementLikes}>like</button></div>
-      <div>Added by {blog.user ? blog.user.name : '-'}</div>
-      <div><button style={showWhenUsersOwnBlog} onClick={deleteBlog}>Remove</button></div>
-      <div>
+      <div>{blog.likes} likes <Button basic color='green' size='mini' onClick={incrementLikes}>Like</Button></div>
+      <div>Added by <em>{blog.user ? blog.user.name : '-'}</em></div>
+      <div><Button basic color='red' size='mini' style={showWhenUsersOwnBlog} onClick={deleteBlog}>Remove</Button></div>
+      <div style={{ marginTop: 4 }}>
         <h3>Comments</h3>
-        <form onSubmit={handleNewComment}>
-          <input { ...comment } />
-          <button type='submit'>Add comment</button>
-        </form>
+        <Form size='tiny' onSubmit={handleNewComment}>
+          <Form.Field inline>
+            <input { ...comment } />
+            <Button size='tiny' type='submit'>Add comment</Button>
+          </Form.Field>
+        </Form>
         <ul>
           {blog.comments.length === 0
             ? <li>No comments</li>

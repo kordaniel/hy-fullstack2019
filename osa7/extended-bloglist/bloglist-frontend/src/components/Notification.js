@@ -1,11 +1,31 @@
 import React from 'react'
+import { Message } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 
-const Notification = ({ notification }) => (
-  <div style={notification.style} className={notification.classname}>
-    {notification.message}
-  </div>
-)
+const Notification = ({ notification }) => {
+  if (notification) {
+    if (notification.classname === 'notification') {
+      return (
+        <Message success>
+          {notification.message}
+        </Message>
+      )
+    }
+    if (notification.classname === 'error') {
+      return (
+        <Message warning>
+          {notification.message}
+        </Message>
+      )
+    }
+  }
+  //eihan tama vie mitaan tilla, voisi palauttaa nullin..?
+  return (
+    <Message hidden>
+      Placeholder
+    </Message>
+  )
+}
 
 const mapStateToProps = (state) => {
   return {

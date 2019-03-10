@@ -1,13 +1,12 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import React            from 'react'
+import { connect }      from 'react-redux'
+import { withRouter }   from 'react-router-dom'
+import { Form, Button } from 'semantic-ui-react'
 
 import { loginUser } from '../reducers/userReducer'
 import { useField } from '../hooks/useField'
 
 const LoginFormNoHistory = (props) => {
-  //const { reset: clearUsername, ...username } = useField('text')
-  //const { reset: clearPassword, ...password } = useField('password')
   const [username, clearUsername] = useField('text')
   const [password, clearPassword] = useField('password')
 
@@ -21,18 +20,18 @@ const LoginFormNoHistory = (props) => {
 
   return (
     <div className='login'>
-      <h2>log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          käyttäjätunnus
+      <h2>Log in</h2>
+      <Form onSubmit={handleLogin}>
+        <Form.Field>
+          <label>Username</label>
           <input { ...username } />
-        </div>
-        <div>
-          salasana
+        </Form.Field>
+        <Form.Field>
+          <label>Password</label>
           <input { ...password } />
-        </div>
-        <button type="submit">kirjaudu</button>
-      </form>
+        </Form.Field>
+        <Button type="submit">Login</Button>
+      </Form>
     </div>
   )
 }
