@@ -44,10 +44,23 @@ mutation addBook($title: String!, $author: String!, $published: Int!, $genres: [
 `
 
 const App = () => {
+  const [errorMessage, setErrorMessage] = useState(null)
   const [page, setPage] = useState('authors')
+
+  const handleError = (error) => {
+    setErrorMessage(error.graphQLErrors[0].message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 10000)
+  }
 
   return (
     <div>
+      {errorMessage &&
+        <div style={{color: 'red'}}>
+          {errorMessage}
+        </div>
+      }
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
@@ -79,6 +92,7 @@ const App = () => {
       <Mutation
         mutation={ADD_BOOK}
         refetchQueries={[{ query:ALL_AUTHORS }, { query:ALL_BOOKS }]}
+        onError={handleError}
       >
         {(newBook) => 
           <NewBook
