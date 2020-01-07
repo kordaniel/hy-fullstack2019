@@ -43,15 +43,32 @@ mutation addBook($title: String!, $author: String!, $published: Int!, $genres: [
 }
 `
 
+const EDIT_AUTHOR = gql`
+mutation editAuthor($name: String!, $setBornTo: Int!) {
+  editAuthor(
+    name: $name,
+    setBornTo: $setBornTo
+  ) {
+    name,
+    born,
+    id
+  }
+}
+`
+
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [page, setPage] = useState('authors')
 
   const handleError = (error) => {
-    setErrorMessage(error.graphQLErrors[0].message)
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 10000)
+    if (error.graphQLErrors) {
+      setErrorMessage(error.graphQLErrors[0]
+        ? error.graphQLErrors[0].message
+        : 'A mysterious error happened...')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 10000)
+    }
   }
 
   return (
@@ -67,16 +84,29 @@ const App = () => {
         <button onClick={() => setPage('add')}>add book</button>
       </div>
 
-      <Query query={ALL_AUTHORS}>
-        {(result) => {
+      <Mutation
+        mutation={EDIT_AUTHOR}
+        /* No need to refetch here, Query and id of authors refreshes browser cache.
+        refetchQueries={[{ query:ALL_AUTHORS }]}
+        */
+        onError={handleError}
+      >
+        {(editAuthor) => {
           return (
-              <Authors
-                show={page === 'authors'}
-                result={result}
-              />
+            <Query query={ALL_AUTHORS}>
+              {(result) => {
+                return (
+                  <Authors
+                    show={page === 'authors'}
+                    result={result}
+                    editAuthor={editAuthor}
+                  />
+                )
+              }}
+            </Query>
           )
         }}
-      </Query>
+      </Mutation>
 
       <Query query={ALL_BOOKS}>
         {(result) => {
@@ -103,51 +133,6 @@ const App = () => {
       </Mutation>
     </div>
   )
-  
-  /*
-  return (
-    <div>
-      <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-      </div>
-    
-      <Authors
-        show={page === 'authors'}
-      />
-
-      <Books
-        show={page === 'books'}
-      />
-
-      <NewBook
-        show={page === 'add'}
-      />
-      
-    </div>
-  )*/
 }
-/*
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-*/
+
 export default App;

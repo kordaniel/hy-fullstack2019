@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 
-const Authors = ({show, result}) => {
+const Authors = ({show, result, editAuthor}) => {
+  const [editAuthorName, setEditAuthorName] = useState('')
+  const [editAuthorBornYear, setEditAuthorBornYear] = useState('')
+
   if (!show) {
     return null
   } else if (result.loading) {
@@ -9,6 +12,17 @@ const Authors = ({show, result}) => {
   
   const authors = result.data.allAuthors
   
+  const submit = async (e) => {
+    e.preventDefault()
+    
+    await editAuthor({
+      variables: { name: editAuthorName, setBornTo: Number(editAuthorBornYear) }
+    })
+
+    setEditAuthorName('')
+    setEditAuthorBornYear('')
+  }
+
   return (
     <div>
       <h2>authors</h2>
@@ -34,6 +48,25 @@ const Authors = ({show, result}) => {
         </tbody>
       </table>
 
+      <h2>Set birthyear</h2>
+      <form onSubmit={submit}>
+        <div>
+          name
+          <input
+            value={editAuthorName}
+            onChange={({ target }) => setEditAuthorName(target.value)}
+          />
+        </div>
+        <div>
+          born
+          <input
+            type='number'
+            value={editAuthorBornYear}
+            onChange={({ target }) => setEditAuthorBornYear(target.value)}
+          />
+        </div>
+        <button type='submit'>Update author</button>
+      </form>
     </div>
   )
 }
