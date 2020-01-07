@@ -5,7 +5,7 @@ const Authors = (props) => {
     return null
   }
   const authors = props.allAuthors
-  //console.log(props.allAuthors)
+  
   return (
     <div>
       <h2>authors</h2>
@@ -13,7 +13,6 @@ const Authors = (props) => {
         <tbody>
           <tr>
             <th>
-              name
             </th>
             <th>
               born
