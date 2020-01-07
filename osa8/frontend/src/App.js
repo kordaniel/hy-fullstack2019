@@ -40,14 +40,10 @@ const App = () => {
 
       <Query query={ALL_AUTHORS}>
         {(result) => {
-          if ( result.loading ) {
-            return <div>Loading authors...</div>
-          }
-          
           return (
               <Authors
                 show={page === 'authors'}
-                allAuthors={result.data.allAuthors}
+                result={result}
               />
           )
         }}
@@ -55,14 +51,10 @@ const App = () => {
 
       <Query query={ALL_BOOKS}>
         {(result) => {
-          if ( result.loading ) {
-            return <div>Loading books...</div>
-          }
-
           return (
             <Books
               show={page === 'books'}
-              allBooks={result.data.allBooks}
+              result={result}
             />
           )
         }}
