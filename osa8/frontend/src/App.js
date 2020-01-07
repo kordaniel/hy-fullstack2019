@@ -3,7 +3,7 @@ import Authors from './components/Authors'
 import Books   from './components/Books'
 import NewBook from './components/NewBook'
 
-import { Query } from 'react-apollo'
+import { Query, Mutation } from 'react-apollo'
 import { gql }   from 'apollo-boost'
 
 const ALL_AUTHORS = gql`
@@ -19,6 +19,22 @@ const ALL_AUTHORS = gql`
 const ALL_BOOKS = gql`
 {
   allBooks {
+    title,
+    author,
+    published,
+    id
+  }
+}
+`
+
+const ADD_BOOK = gql`
+mutation addBook($title: String!, $author: String!, $published: Int!, $genres: [String!]!) {
+  addBook(
+    title: $title,
+    author: $author,
+    published: $published,
+    genres: $genres
+  ) {
     title,
     author,
     published,
@@ -59,6 +75,18 @@ const App = () => {
           )
         }}
       </Query>
+      
+      <Mutation
+        mutation={ADD_BOOK}
+        refetchQueries={[{ query:ALL_AUTHORS }, { query:ALL_BOOKS }]}
+      >
+        {(newBook) => 
+          <NewBook
+            show={page === 'add'}
+            newBook={newBook}
+          />
+        }
+      </Mutation>
     </div>
   )
   
