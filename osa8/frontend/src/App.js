@@ -3,7 +3,7 @@ import Authors from './components/Authors'
 import Books   from './components/Books'
 import NewBook from './components/NewBook'
 
-import { Query, Mutation } from 'react-apollo'
+import { useQuery, useMutation } from 'react-apollo'
 import { gql }   from 'apollo-boost'
 
 const ALL_AUTHORS = gql`
@@ -15,7 +15,7 @@ const ALL_AUTHORS = gql`
     id
   }
 }
-`
+`;
 const ALL_BOOKS = gql`
 {
   allBooks {
@@ -25,7 +25,7 @@ const ALL_BOOKS = gql`
     id
   }
 }
-`
+`;
 
 const ADD_BOOK = gql`
 mutation addBook($title: String!, $author: String!, $published: Int!, $genres: [String!]!) {
@@ -41,7 +41,7 @@ mutation addBook($title: String!, $author: String!, $published: Int!, $genres: [
     id
   }
 }
-`
+`;
 
 const EDIT_AUTHOR = gql`
 mutation editAuthor($name: String!, $setBornTo: Int!) {
@@ -54,22 +54,42 @@ mutation editAuthor($name: String!, $setBornTo: Int!) {
     id
   }
 }
-`
+`;
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [page, setPage] = useState('authors')
-
+  
   const handleError = (error) => {
-    if (error.graphQLErrors) {
-      setErrorMessage(error.graphQLErrors[0]
-        ? error.graphQLErrors[0].message
-        : 'A mysterious error happened...')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 10000)
+    var errMess = undefined;
+    if (Array.isArray(error.graphQLErrors) && error.graphQLErrors.length) {
+      errMess = error.graphQLErrors[0].message ? error.graphQLErrors[0].message : 'A mysterious error happened...'
+    } else if (error.message) {
+      errMess = error.message
+    } else {
+      errMess = 'A mysterious error happened...'
     }
+
+    setErrorMessage(errMess)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 10000)
   }
+  
+  const books = useQuery(ALL_BOOKS)
+  const authors = useQuery(ALL_AUTHORS)
+
+  const [addBook] = useMutation(ADD_BOOK, {
+    onError: handleError,
+    refetchQueries: [{ query:ALL_AUTHORS }, { query:ALL_BOOKS }]
+  })
+
+  const [editAuthor] = useMutation(EDIT_AUTHOR, {
+    onError: handleError
+    //No need to refetch here, Query and id of authors refreshes browser cache.
+    //,
+    //refetchQueries: [{ query: ALL_AUTHORS }]
+  })
 
   return (
     <div>
@@ -84,53 +104,10 @@ const App = () => {
         <button onClick={() => setPage('add')}>add book</button>
       </div>
 
-      <Mutation
-        mutation={EDIT_AUTHOR}
-        /* No need to refetch here, Query and id of authors refreshes browser cache.
-        refetchQueries={[{ query:ALL_AUTHORS }]}
-        */
-        onError={handleError}
-      >
-        {(editAuthor) => {
-          return (
-            <Query query={ALL_AUTHORS}>
-              {(result) => {
-                return (
-                  <Authors
-                    show={page === 'authors'}
-                    result={result}
-                    editAuthor={editAuthor}
-                  />
-                )
-              }}
-            </Query>
-          )
-        }}
-      </Mutation>
+      <Authors show={page === 'authors'} result={authors} editAuthor={editAuthor} />
+      <Books show={page === 'books'} result={books} />
+      <NewBook show={page === 'add'} newBook={addBook} />
 
-      <Query query={ALL_BOOKS}>
-        {(result) => {
-          return (
-            <Books
-              show={page === 'books'}
-              result={result}
-            />
-          )
-        }}
-      </Query>
-      
-      <Mutation
-        mutation={ADD_BOOK}
-        refetchQueries={[{ query:ALL_AUTHORS }, { query:ALL_BOOKS }]}
-        onError={handleError}
-      >
-        {(newBook) => 
-          <NewBook
-            show={page === 'add'}
-            newBook={newBook}
-          />
-        }
-      </Mutation>
     </div>
   )
 }
