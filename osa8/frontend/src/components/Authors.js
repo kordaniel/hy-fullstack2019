@@ -49,20 +49,28 @@ const Authors = ({show, result, editAuthor}) => {
       </table>
 
       <h2>Set birthyear</h2>
-      <form onSubmit={submit}>
+      <form onSubmit={(e) => {
+          if ('' !== editAuthorName) {
+            submit(e)
+          }
+        }
+      }>
         <div>
-          name
-          <input
-            value={editAuthorName}
-            onChange={({ target }) => setEditAuthorName(target.value)}
-          />
+            Select Author:
+            <select defaultValue='defDisVal' onChange={({ target }) => setEditAuthorName(target.value)}>
+              <option disabled value='defDisVal'>Select author</option>
+              {authors.map(a =>
+                <option key={a.id} value={a.name}>{a.name}</option>
+              )}
+            </select>
         </div>
         <div>
-          born
+          Born:
           <input
             type='number'
             value={editAuthorBornYear}
             onChange={({ target }) => setEditAuthorBornYear(target.value)}
+            required
           />
         </div>
         <button type='submit'>Update author</button>
