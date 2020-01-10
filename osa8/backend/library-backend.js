@@ -1,6 +1,37 @@
-const { ApolloServer, gql } = require('apollo-server')
-const uuid                  = require('uuid/v1')
+require('dotenv').config()
 
+const {
+  ApolloServer,
+  UserInputError,
+  gql }         = require('apollo-server')
+const mongoose  = require('mongoose')
+const Author    = require('./models/author')
+const Book      = require('./models/book')
+
+//const uuid = require('uuid/v1')//remove
+
+mongoose.set('useFindAndModify', false)
+
+/* Save MongoDB URI in an .env file with the syntax MONGODB_URI=mongodb+srv://.. */
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('Connecting to', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true})
+  .then(() => {
+    console.log('')
+    console.log('--------------------')
+    console.log('Connected to MongoDB')
+    console.log('--------------------')
+  })
+  .catch((error) => {
+    console.log('')
+    console.log('--------------------')
+    console.log('Error connecting to MongoDB:', error.message)
+    console.log('--------------------')
+  })
+
+/*
 let authors = [
   {
     name: 'Robert Martin',
@@ -26,13 +57,13 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ]
-
+*/
 /*
  * It would be more sensible to assosiate book and the author by saving 
  * the author id instead of the name to the book.
  * For simplicity we however save the author name.
 */
-
+/*
 let books = [
   {
     title: 'Clean Code',
@@ -84,12 +115,17 @@ let books = [
     genres: ['classic', 'revolution']
   },
 ]
-
+*/
 const typeDefs = gql`
+  enum YesNo {
+    YES
+    NO
+  }
+
   type Book {
     title: String!
-    author: String!
     published: Int!
+    author: Author!
     genres: [String!]!
     id: ID!
   }
@@ -121,12 +157,15 @@ const typeDefs = gql`
     ): Author
   }
 `
-
+String
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      const books = await Book.find({}).populate('author')
+      return books
+      /*
       if (args.author === undefined && args.genre === undefined) {
         return books
       }
@@ -140,30 +179,45 @@ const resolvers = {
         }
 
         return args.author === book.author && book.genres.includes(args.genre)
-      })
+      })*/
     },
-    allAuthors: () => authors
+    allAuthors: () => Author.find({})
   },
-  Author: {
-    bookCount: (root) => books.filter(b => b.author === root.name).length
-  },
+  /* not yet required to work
+   *Author: {
+   *  bookCount: (root) => books.filter(b => b.author === root.name).length
+   *},
+   */
   Mutation: {
-    addBook: (root, args) => {
-      if (!authors.some(a => a.name === args.author)) {
-        authors = authors.concat({ name: args.author, id: uuid() })
-      }
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-      return book
+    addBook: async (root, args) => {
+      const authorInDb = await Author.findOne({ name: args.author })
+      
+      const author = authorInDb !== null
+        ? authorInDb
+        : await new Author({
+            name: args.author
+          }).save()
+
+      const book = new Book({
+        title: args.title,
+        published: args.published,
+        author: author._id,
+        genres: args.genres
+      })
+
+      await book.save()
+      return Book.findById(book._id).populate('author')
     },
     editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name)
-      if (!author) {
-        return null
-      }
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
-      return updatedAuthor
+      //const author = authors.find(a => a.name === args.name)
+      //if (!author) {
+      //  return null
+      //}
+      //const updatedAuthor = { ...author, born: args.setBornTo }
+      //authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
+      //return updatedAuthor
+      const author = new Author({ ...args, born: args.setBornTo })
+      return author.save()
     }
   }
 }
