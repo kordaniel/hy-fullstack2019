@@ -163,36 +163,40 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      const books = await Book.find({}).populate('author')
-      return books
-      /*
-      if (args.author === undefined && args.genre === undefined) {
-        return books
+      const author = args.author
+        ? await Author.findOne({ name: args.author})
+        : null
+      
+      /* Here we need to check if args.author is defined and
+       * also if author is defined. This is so that if the
+       * author parameter is not found in db, then we will
+       * not return any books.
+       */
+      const queryObj = {
+        ...(args.author && { author: author ? author.id : undefined }),
+        ...(args.genre && { genres: { $in: [ args.genre ] } })
       }
-
-      return books.filter(book => {
-        if (args.genre === undefined) {
-          return args.author === book.author
-        }
-        if (args.author === undefined) {
-          return book.genres.includes(args.genre)
-        }
-
-        return args.author === book.author && book.genres.includes(args.genre)
-      })*/
+      
+      return Book.find(queryObj).populate('author')
     },
     allAuthors: () => Author.find({})
   },
-  /* not yet required to work
-   *Author: {
-   *  bookCount: (root) => books.filter(b => b.author === root.name).length
-   *},
-   */
+  Author: {
+    bookCount: (root) => Book.find({ author: root.id }).countDocuments()
+  },
   Mutation: {
     addBook: async (root, args) => {
+      /*
+      if (await Book.findOne({ title: args.title })) {
+        throw new UserInputError('Book title must be unique', {
+          invalidArgs: args.title,
+        })
+      }
+      */
+
       const authorInDb = await Author.findOne({ name: args.author })
       
-      const author = authorInDb !== null
+      const author = authorInDb
         ? authorInDb
         : await new Author({
             name: args.author
@@ -208,15 +212,32 @@ const resolvers = {
       await book.save()
       return Book.findById(book._id).populate('author')
     },
-    editAuthor: (root, args) => {
-      //const author = authors.find(a => a.name === args.name)
-      //if (!author) {
-      //  return null
-      //}
-      //const updatedAuthor = { ...author, born: args.setBornTo }
-      //authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
-      //return updatedAuthor
-      const author = new Author({ ...args, born: args.setBornTo })
+    editAuthor: async (root, args) => {
+      /*
+      const authorInDb = await Author.findOne({ name: args.name})
+      
+      if (authorInDb) {
+        authorInDb.born = args.setBornTo
+      }
+
+      const author = authorInDb
+        ? authorInDb
+        : new Author({ ...args, born: args.setBornTo })
+      
+      return author.save()
+      */
+      /* This method should return null if the author is
+       * not in the DB. Why have I changed it to create a
+       * new one? Refactoring =>
+       */
+      const author = await Author.findOne({ name: args.name })
+
+      if (!author) {
+        return null
+      }
+
+      author.born = args.setBornTo
+
       return author.save()
     }
   }
