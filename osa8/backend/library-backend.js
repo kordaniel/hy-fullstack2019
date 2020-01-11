@@ -164,7 +164,7 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
       const author = args.author
-        ? await Author.findOne({ name: args.author})
+        ? await Author.findOne({ name: args.author })
         : null
       
       /* Here we need to check if args.author is defined and
