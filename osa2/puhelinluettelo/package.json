@@ -27,6 +27,6 @@
   ],
   "devDependencies": {
     "json-server": "^0.14.2",
-    "terser": "^3.14.1"
+    "terser": "^4.8.1"
   }
 }
